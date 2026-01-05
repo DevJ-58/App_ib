@@ -1,47 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Connexion à la plateforme de gestion UIYA">
     <link rel="stylesheet" href="../CSS/auth.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-    <title>connexion_Bib</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Connexion - Boutique UIYA</title>
 </head>
 <body>
+    <!-- En-tête fixe -->
     <div class="struct">
-        <i class="fa-solid fa-boxes-stacked"></i>
-        <h1>le IB en kinmin</h1>
+        <i class="fa-solid fa-store"></i>
+        <h1>Boutique UIYA - Gestion de Stock</h1>
     </div>
+
+    <!-- Conteneur principal -->
     <div class="container">
-        <form  method="POST" action="">
-                <h1>Connexion </h1>
+        <form method="POST" action="">
+            <h1>Connexion</h1>
+            
             <div class="detail-user">
+                <!-- Colonne 1 -->
                 <div class="colonne">
                     <div class="zone-saisie">
-                       <!-- <span class="details">Email: </span> -->
-                       <input type="number" name="number_user" placeholder="Entrer votre numero" required>
+                        <input 
+                            type="number" 
+                            name="number_user" 
+                            placeholder="Numéro de téléphone" 
+                            required
+                            autocomplete="tel"
+                            pattern="[0-9]{10}"
+                            title="Veuillez entrer un numéro valide (10 chiffres)">
                     </div>
                 </div>
+                
+                <!-- Colonne 2 -->
                 <div class="colonne">
                     <div class="zone-saisie">
-                       <!-- <span class="details">Mot de passe: </span> -->
-                       <input type="password" name="password_user" placeholder="Entrer votre mot de passe" required>
+                        <input 
+                            type="password" 
+                            name="password_user" 
+                            placeholder="Mot de passe" 
+                            required
+                            autocomplete="current-password"
+                            minlength="6">
                     </div>
                 </div>
             </div>
-            <input id="btnS" type="submit" name="sm_form" value="Se connecter" onclick="Opendash()">
+
+            <input 
+                id="btnS" 
+                type="submit" 
+                name="sm_form" 
+                value="Se connecter" 
+                onclick="Opendash()">
+
             <div class="lastF">
                 <div class="redirect">
-                  <a href="resetpassword.html">mot de passe oublié ?</a>
-                  <span>Pas encore de compte? <a href="inscription.html">s'inscrire</a></span>
+                    <a href="resetpassword.html">
+                        <i class="fa-solid fa-key"></i> Mot de passe oublié ?
+                    </a>
+                    <span>Pas encore de compte ? <a href="inscription.html">S'inscrire</a></span>
                 </div>
                 <div class="icon_anim">
-                     <i class="fa-solid fa-boxes-stacked"></i>
+                    <i class="fa-solid fa-boxes-stacked"></i>
                 </div>
             </div>
         </form>
     </div>
+
     <script src="../JS/main.js"></script>
 </body>
 </html>

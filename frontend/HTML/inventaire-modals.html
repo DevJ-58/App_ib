@@ -1,0 +1,93 @@
+<!-- ============================================ -->
+<!-- MODAL NOUVEAU INVENTAIRE -->
+<!-- ============================================ -->
+<div class="modal-overlay" id="modalNouvelInventaire">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2><i class="fa-solid fa-clipboard-list"></i> Démarrer un Nouvel Inventaire</h2>
+            <button class="btn-fermer-modal" onclick="fermerModalNouvelInventaire()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="formNouvelInventaire" onsubmit="demarrerInventaire(event)">
+                <div class="form-group">
+                    <label>Nom du responsable *</label>
+                    <input type="text" id="nomResponsableInventaire" required placeholder="Nom complet du responsable">
+                </div>
+
+                <div class="form-group">
+                    <label>Type d'inventaire *</label>
+                    <select id="typeInventaire" required>
+                        <option value="">Sélectionner un type</option>
+                        <option value="complet">Inventaire complet</option>
+                        <option value="partiel">Inventaire partiel</option>
+                        <option value="tournant">Inventaire tournant</option>
+                        <option value="exceptionnel">Inventaire exceptionnel</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Commentaire (optionnel)</label>
+                    <textarea id="commentaireInventaire" rows="3" placeholder="Raison de l'inventaire, observations..."></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-action secondaire" onclick="fermerModalNouvelInventaire()">
+                        Annuler
+                    </button>
+                    <button type="submit" class="btn-action primaire">
+                        <i class="fa-solid fa-play"></i> Démarrer l'Inventaire
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================ -->
+<!-- MODAL COMPTAGE PRODUIT -->
+<!-- ============================================ -->
+<div class="modal-overlay" id="modalComptage">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2><i class="fa-solid fa-clipboard-check"></i> Compter le produit</h2>
+            <button class="btn-fermer-modal" onclick="fermerModalComptage()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="info-produit-comptage">
+                <div class="info-ligne">
+                    <span class="label">Produit:</span>
+                    <span class="valeur" id="nomProduitComptage"></span>
+                </div>
+                <div class="info-ligne">
+                    <span class="label">Stock théorique:</span>
+                    <span class="valeur" id="stockTheoriqueComptage"></span>
+                </div>
+            </div>
+            
+            <form id="formComptage" onsubmit="enregistrerComptage(event)">
+                <div class="form-group">
+                    <label>Stock réel compté *</label>
+                    <input type="number" id="stockReelComptage" min="0" required placeholder="Quantité comptée">
+                </div>
+                
+                <div class="form-group">
+                    <label>Commentaire (optionnel)</label>
+                    <textarea id="commentaireComptage" rows="3" placeholder="Notes sur le comptage, produit abîmé, etc."></textarea>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn-action secondaire" onclick="fermerModalComptage()">
+                        Annuler
+                    </button>
+                    <button type="submit" class="btn-action primaire">
+                        <i class="fa-solid fa-check"></i> Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

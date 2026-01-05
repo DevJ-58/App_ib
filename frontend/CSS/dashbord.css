@@ -1,10 +1,5 @@
-/* ====================================================================
-   SYSTÈME DE GESTION DE STOCK BOUTIQUE UIYA - DASHBOARD.CSS
-   ==================================================================== */
 
-/* ====================================================================
-   VARIABLES CSS
-   ==================================================================== */
+
 
 :root {
     /* Couleurs principales */
@@ -212,7 +207,7 @@ input, select, textarea {
 }
 
 /* ====================================================================
-   BARRE LATÉRALE
+   BARRE LATÉRALE (AVEC CORRECTIONS)
    ==================================================================== */
 
 .barre-laterale {
@@ -241,13 +236,21 @@ input, select, textarea {
     gap: var(--espacement-xs);
     padding: 0 var(--espacement-md);
 }
-.menu-navigation li:hover {
-    background-color: rgba(191, 131, 131, 0.572);
 
+.menu-navigation li {
+    border-radius: var(--rayon-md);
+    transition: var(--transition-rapide);
 }
-.menu-navigation li.actif{
-    background-color: #004085;
+
+.menu-navigation li:hover {
+    background-color: rgba(0, 123, 255, 0.05);
 }
+
+/* CORRECTION: État actif de la navigation */
+.menu-navigation li.actif {
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
 .menu-navigation a {
     display: flex;
     align-items: center;
@@ -259,12 +262,19 @@ input, select, textarea {
 }
 
 .menu-navigation a:hover {
-    background-color: var(--couleur-fond);
-}
-.menu-navigation a:active{
-    background-color: rgba(191, 131, 131, 0.572);
+    background-color: rgba(0, 123, 255, 0.05);
 }
 
+/* CORRECTION: Style du lien actif */
+.menu-navigation a.actif {
+    background-color: rgba(0, 123, 255, 0.15);
+    color: var(--couleur-primaire);
+    font-weight: 600;
+}
+
+.menu-navigation a.actif i {
+    color: var(--couleur-primaire);
+}
 
 .menu-navigation a i {
     font-size: 1.2rem;
@@ -316,7 +326,7 @@ input, select, textarea {
 }
 
 /* ====================================================================
-   GESTION DES SECTIONS
+   GESTION DES SECTIONS (AVEC OPTIMISATION)
    ==================================================================== */
 
 .section-page {
@@ -326,6 +336,19 @@ input, select, textarea {
 .section-page.active {
     display: block;
     animation: fadeIn 0.3s ease;
+}
+
+/* OPTIMISATION: Lazy loading des sections */
+.section-page:not(.active) {
+    visibility: hidden;
+    position: absolute;
+    left: -9999px;
+}
+
+.section-page.active {
+    visibility: visible;
+    position: relative;
+    left: auto;
 }
 
 @keyframes fadeIn {
@@ -403,6 +426,17 @@ input, select, textarea {
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
+/* AMÉLIORATION: Bouton de clear pour la recherche */
+.zone-recherche input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 16px;
+    width: 16px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236c757d'%3E%3Cpath d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/%3E%3C/svg%3E");
+    background-size: 16px 16px;
+    cursor: pointer;
+}
+
 .actions-rapides {
     display: flex;
     gap: var(--espacement-md);
@@ -453,6 +487,15 @@ input, select, textarea {
     background-color: #e0a800;
 }
 
+/* AMÉLIORATION: État désactivé des boutons */
+button:disabled,
+.btn-action:disabled,
+.btn-action-vente:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 /* ====================================================================
    SECTION STATISTIQUES
    ==================================================================== */
@@ -470,11 +513,13 @@ input, select, textarea {
     padding: var(--espacement-lg);
     box-shadow: var(--ombre-legere);
     transition: var(--transition-rapide);
+    min-height: 120px;
+    will-change: transform;
 }
 
 .carte-stat:hover {
     transform: translateY(-5px);
-    box-shadow: var(--ombre-forte);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .entete-carte {
@@ -488,6 +533,9 @@ input, select, textarea {
     color: var(--couleur-texte-clair);
     font-weight: 500;
     margin-bottom: var(--espacement-sm);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .info-stat p {
@@ -644,6 +692,11 @@ input, select, textarea {
     border-radius: var(--rayon-lg);
     padding: var(--espacement-lg);
     box-shadow: var(--ombre-legere);
+    will-change: transform;
+}
+
+.carte-contenu:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .carte-contenu.section-pleine {
@@ -665,6 +718,9 @@ input, select, textarea {
     display: flex;
     align-items: center;
     gap: var(--espacement-sm);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .btn-voir-plus {
@@ -734,6 +790,14 @@ input, select, textarea {
     transition: var(--transition-rapide);
 }
 
+/* AMÉLIORATION: Style pour tableaux vides */
+table tbody tr:only-child td[colspan] {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--couleur-texte-clair);
+    font-style: italic;
+}
+
 /* Info produit dans les tableaux */
 .info-produit {
     display: flex;
@@ -757,6 +821,9 @@ input, select, textarea {
     font-size: 0.95rem;
     color: var(--couleur-texte);
     margin-bottom: 0.2rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .code-barre {
@@ -773,7 +840,8 @@ input, select, textarea {
     padding: 0.4rem 0.8rem;
     border-radius: 20px;
     font-size: 0.85rem;
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: 0.3px;
 }
 
 .badge.paye {
@@ -808,6 +876,11 @@ input, select, textarea {
 .badge-hygiene {
     background-color: #f8d7da;
     color: #721c24;
+}
+
+.badge-autre {
+    background-color: #e9ecef;
+    color: #495057;
 }
 
 .stock-bon {
@@ -872,6 +945,7 @@ input, select, textarea {
 .actions-inventaire {
     display: flex;
     gap: var(--espacement-sm);
+    justify-content: flex-start;
 }
 
 .btn-icone {
@@ -1038,6 +1112,7 @@ input, select, textarea {
    ==================================================================== */
 
 .zone-graphique {
+    position: relative;
     min-height: 300px;
     display: flex;
     flex-direction: column;
@@ -1046,6 +1121,10 @@ input, select, textarea {
     background-color: var(--couleur-fond);
     border-radius: var(--rayon-md);
     padding: var(--espacement-xl);
+}
+
+.zone-graphique canvas {
+    max-height: 300px;
 }
 
 .placeholder-icon {
@@ -1161,12 +1240,34 @@ input, select, textarea {
 }
 
 .produit-rapide {
+    position: relative;
+    overflow: hidden;
     padding: var(--espacement-md);
     border: 1px solid var(--couleur-bordure);
     border-radius: var(--rayon-md);
     text-align: center;
     cursor: pointer;
     transition: var(--transition-rapide);
+    will-change: transform;
+}
+
+/* AMÉLIORATION: Animation du hover */
+.produit-rapide::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background-color: rgba(0, 123, 255, 0.1);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+}
+
+.produit-rapide:hover::before {
+    width: 200%;
+    height: 200%;
 }
 
 .produit-rapide:hover {
@@ -1289,8 +1390,9 @@ input, select, textarea {
     margin-bottom: var(--espacement-md);
 }
 
+/* CORRECTION: Options de paiement */
 .option-paiement {
-    display: grid;
+    display: grid !important;
     grid-template-columns: 1fr 1fr;
     gap: var(--espacement-md);
     margin-bottom: var(--espacement-lg);
@@ -1307,11 +1409,16 @@ input, select, textarea {
 
 .option-paiement > div:hover {
     border-color: var(--couleur-primaire);
+    background-color: rgba(0, 123, 255, 0.05);
 }
 
 .option-paiement > div.actif {
     border-color: var(--couleur-primaire);
-    background-color: rgba(0, 123, 255, 0.1);
+    background-color: rgba(0, 123, 255, 0.15);
+}
+
+.option-paiement > div.actif i {
+    color: var(--couleur-primaire);
 }
 
 .option-paiement i {
@@ -1397,11 +1504,6 @@ input, select, textarea {
     justify-content: center;
     gap: var(--espacement-sm);
     transition: var(--transition-rapide);
-}
-
-.btn-action-vente:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
 }
 
 .btn-annuler {
@@ -1515,6 +1617,12 @@ input, select, textarea {
     border: 1px solid var(--couleur-bordure);
     border-radius: var(--rayon-md);
     cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236c757d'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.5rem;
+    padding-right: 2.5rem;
 }
 
 .stats-rapides {
@@ -1586,6 +1694,7 @@ input, select, textarea {
     justify-content: center;
     gap: var(--espacement-sm);
     margin-top: var(--espacement-xl);
+    user-select: none;
 }
 
 .btn-page {
@@ -1598,7 +1707,7 @@ input, select, textarea {
     border-radius: var(--rayon-md);
     background-color: white;
     color: var(--couleur-texte);
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     transition: var(--transition-rapide);
 }
@@ -1619,7 +1728,7 @@ input, select, textarea {
 }
 
 /* ====================================================================
-   MODALS
+   MODALS (AVEC AMÉLIORATIONS)
    ==================================================================== */
 
 .modal-overlay {
@@ -1636,6 +1745,7 @@ input, select, textarea {
     opacity: 0;
     visibility: hidden;
     transition: var(--transition-normale);
+    backdrop-filter: blur(2px);
 }
 
 .modal-overlay.active {
@@ -1653,10 +1763,22 @@ input, select, textarea {
     box-shadow: var(--ombre-forte);
     transform: scale(0.9);
     transition: transform 0.3s;
+    animation: slideDown 0.3s ease;
 }
 
 .modal-overlay.active .modal-container {
     transform: scale(1);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .modal-container.modal-large {
@@ -1703,6 +1825,10 @@ input, select, textarea {
     margin-bottom: var(--espacement-lg);
 }
 
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
 .form-group label {
     display: block;
     margin-bottom: var(--espacement-sm);
@@ -1726,6 +1852,14 @@ input, select, textarea {
 .form-group textarea:focus {
     border-color: var(--couleur-primaire);
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* AMÉLIORATION: Indicateur de champ requis */
+.form-group label:has(+ input[required])::after,
+.form-group label:has(+ select[required])::after,
+.form-group label:has(+ textarea[required])::after {
+    content: ' *';
+    color: var(--couleur-danger);
 }
 
 .modal-actions {
@@ -1753,6 +1887,177 @@ input, select, textarea {
 }
 
 /* ====================================================================
+   MOUVEMENTS DE STOCK (CORRECTIONS)
+   ==================================================================== */
+
+.mouvement-item {
+    display: flex;
+    align-items: center;
+    gap: var(--espacement-md);
+    padding: var(--espacement-md);
+    background-color: var(--couleur-fond);
+    border-radius: var(--rayon-md);
+    margin-bottom: var(--espacement-sm);
+    border-left: 4px solid var(--couleur-bordure);
+    transition: var(--transition-rapide);
+}
+
+.mouvement-item:hover {
+    background-color: #e9ecef;
+    transform: translateX(5px);
+}
+
+.mouvement-item.mouvement-entree {
+    border-left-color: var(--couleur-succes);
+}
+
+.mouvement-item.mouvement-sortie {
+    border-left-color: var(--couleur-info);
+}
+
+.mouvement-item.mouvement-perte {
+    border-left-color: var(--couleur-danger);
+}
+
+.mouvement-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.mouvement-entree .mouvement-icon {
+    background-color: #d4edda;
+    color: var(--couleur-succes);
+}
+
+.mouvement-sortie .mouvement-icon {
+    background-color: #d1ecf1;
+    color: var(--couleur-info);
+}
+
+.mouvement-perte .mouvement-icon {
+    background-color: #f8d7da;
+    color: var(--couleur-danger);
+}
+
+.mouvement-info {
+    flex: 1;
+}
+
+.mouvement-details {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--couleur-texte-clair);
+    margin-top: 0.25rem;
+}
+
+.mouvement-date {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--couleur-texte-tres-clair);
+    margin-top: 0.25rem;
+}
+
+.mouvement-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.badge-entree {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.badge-vente,
+.badge-sortie {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.badge-perte {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* ====================================================================
+   ALERTES DE STOCK (CORRECTIONS)
+   ==================================================================== */
+
+.alerte-stock {
+    display: flex;
+    align-items: center;
+    gap: var(--espacement-md);
+    padding: var(--espacement-md);
+    border-radius: var(--rayon-md);
+    margin-bottom: var(--espacement-sm);
+    border-left: 4px solid;
+}
+
+.alerte-stock.critique {
+    background-color: #f8d7da;
+    border-left-color: var(--couleur-danger);
+}
+
+.alerte-stock.avertissement {
+    background-color: #fff3cd;
+    border-left-color: var(--couleur-warning);
+}
+
+.alerte-stock i {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.alerte-stock.critique i {
+    color: var(--couleur-danger);
+}
+
+.alerte-stock.avertissement i {
+    color: var(--couleur-warning);
+}
+
+.alerte-details {
+    flex: 1;
+}
+
+.alerte-details strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--couleur-texte);
+}
+
+.alerte-details span {
+    font-size: 0.85rem;
+    color: var(--couleur-texte-clair);
+}
+
+.btn-alerte-action {
+    padding: var(--espacement-sm) var(--espacement-md);
+    background-color: white;
+    color: var(--couleur-texte);
+    border: 1px solid var(--couleur-bordure);
+    border-radius: var(--rayon-md);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: var(--transition-rapide);
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.btn-alerte-action:hover {
+    background-color: var(--couleur-primaire);
+    color: white;
+    border-color: var(--couleur-primaire);
+}
+
+/* ====================================================================
    RAPPORTS
    ==================================================================== */
 
@@ -1760,6 +2065,7 @@ input, select, textarea {
     display: flex;
     align-items: center;
     gap: var(--espacement-md);
+    flex-wrap: wrap;
 }
 
 .filtres-periode select {
@@ -1856,6 +2162,7 @@ input, select, textarea {
 .filtres-alertes {
     display: flex;
     gap: var(--espacement-md);
+    flex-wrap: wrap;
 }
 
 .btn-filtre {
@@ -2025,6 +2332,7 @@ input, select, textarea {
     width: 20px;
     height: 20px;
     cursor: pointer;
+    accent-color: var(--couleur-primaire);
 }
 
 .parametre-desc {
@@ -2186,6 +2494,9 @@ input, select, textarea {
 .type-remboursement {
     display: flex;
     gap: var(--espacement-lg);
+    padding: var(--espacement-md);
+    background-color: var(--couleur-fond);
+    border-radius: var(--rayon-md);
 }
 
 .radio-label {
@@ -2228,6 +2539,7 @@ input, select, textarea {
     background: white;
     padding: var(--espacement-xl);
     border: 2px dashed var(--couleur-bordure);
+    font-family: 'Courier New', monospace;
 }
 
 .ticket-header {
@@ -2252,6 +2564,7 @@ input, select, textarea {
     justify-content: space-between;
     padding: var(--espacement-sm) 0;
     border-bottom: 1px solid var(--couleur-bordure);
+    font-size: 0.9rem;
 }
 
 .ticket-footer {
@@ -2321,7 +2634,7 @@ input, select, textarea {
 }
 
 /* ====================================================================
-   NOTIFICATIONS
+   NOTIFICATIONS TOAST (NOUVEAU)
    ==================================================================== */
 
 .notification {
@@ -2382,6 +2695,16 @@ input, select, textarea {
 }
 
 /* ====================================================================
+   ACCESSIBILITÉ
+   ==================================================================== */
+
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid var(--couleur-primaire);
+    outline-offset: 2px;
+}
+
+/* ====================================================================
    RESPONSIVE
    ==================================================================== */
 
@@ -2396,6 +2719,12 @@ input, select, textarea {
 }
 
 @media (max-width: 768px) {
+    /* Optimisation des performances sur mobile */
+    * {
+        animation-duration: 0.2s !important;
+        transition-duration: 0.2s !important;
+    }
+    
     .zone-navigation {
         padding: 0 var(--espacement-md);
     }
@@ -2414,10 +2743,12 @@ input, select, textarea {
     
     .barre-laterale {
         transform: translateX(-100%);
+        box-shadow: var(--ombre-forte);
     }
     
     .barre-laterale.active {
         transform: translateX(0);
+        box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.5);
     }
     
     .zone-dashboard {
@@ -2466,6 +2797,15 @@ input, select, textarea {
     }
 }
 
+@media (min-width: 1920px) {
+    .zone-dashboard {
+        max-width: 1800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 250px;
+    }
+}
+
 /* ====================================================================
    UTILITAIRES
    ==================================================================== */
@@ -2510,6 +2850,31 @@ input, select, textarea {
     display: flex !important;
 }
 
+/* État de chargement */
+.loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--couleur-primaire);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
 /* ====================================================================
    IMPRESSION
    ==================================================================== */
@@ -2522,7 +2887,8 @@ input, select, textarea {
     .btn-alerte,
     .actions-produit,
     .actions-vente,
-    .actions-ticket {
+    .actions-ticket,
+    .no-print {
         display: none !important;
     }
     
@@ -2533,6 +2899,17 @@ input, select, textarea {
     
     .ticket {
         border: none;
+    }
+    
+    * {
+        color: black !important;
+        background: white !important;
+    }
+    
+    .carte-stat,
+    .carte-contenu {
+        break-inside: avoid;
+        page-break-inside: avoid;
     }
 }
 
@@ -2557,3 +2934,4 @@ input, select, textarea {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--couleur-texte-clair);
 }
+

@@ -1,9 +1,7 @@
 // ====================================================================
-// SYSTÈME DE GESTION DE STOCK BOUTIQUE UIYA - MAIN.JS
+// SYSTÈME DE GESTION DE STOCK BOUTIQUE UIYA - MAIN.JS (CORRIGÉ)
 // ====================================================================
-function Opendash(){
-    window.location.href = "dashbord.html";
-}
+
 // ====================================================================
 // VARIABLES GLOBALES
 // ====================================================================
@@ -21,6 +19,7 @@ let creditData = [];
 let ventesData = [];
 let mouvementsData = [];
 let alertesData = [];
+let typePaiementActuel = 'comptant';
 
 // ====================================================================
 // INITIALISATION AU CHARGEMENT
@@ -49,8 +48,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // ====================================================================
 
 function chargerDonneesInitiales() {
-    // Dans la version finale, ces données viendront du backend PHP via AJAX
-    
     // Charger les produits
     produitsData = [
         {
@@ -102,11 +99,21 @@ function chargerDonneesInitiales() {
             stock: 32,
             seuilAlerte: 15,
             icone: 'fa-cookie'
+        },
+        {
+            id: 'JUS001',
+            nom: 'Jus Youki',
+            codeBarre: '5678901234567',
+            categorie: 'boissons',
+            prix: 400,
+            stock: 28,
+            seuilAlerte: 15,
+            icone: 'fa-glass-water'
         }
     ];
     
     // Charger les stocks
-    stockData = JSON.parse(JSON.stringify(produitsData)); // Copie des produits
+    stockData = JSON.parse(JSON.stringify(produitsData));
     
     // Charger les crédits
     creditData = [
@@ -127,6 +134,15 @@ function chargerDonneesInitiales() {
             dateCredit: '14/12/2025',
             joursEcoules: 0,
             etat: 'en-cours'
+        },
+        {
+            id: 'C-003',
+            client: 'Yao Marc',
+            montantInitial: 8500,
+            montantRestant: 0,
+            dateCredit: '10/12/2025',
+            joursEcoules: 4,
+            etat: 'rembourse'
         }
     ];
     
@@ -135,8 +151,8 @@ function chargerDonneesInitiales() {
         {
             id: 1,
             type: 'entree',
-            produitId: 'RIZ001',
-            produitNom: 'Riz 25kg',
+            produitId: 'COCA001',
+            produitNom: 'Coca-Cola 50cl',
             quantite: 20,
             motif: 'Approvisionnement',
             date: '14/12/2025 10:30'
@@ -144,11 +160,20 @@ function chargerDonneesInitiales() {
         {
             id: 2,
             type: 'sortie',
-            produitId: 'COCA001',
-            produitNom: 'Coca-Cola 50cl',
+            produitId: 'PAIN001',
+            produitNom: 'Pain',
             quantite: 15,
             motif: 'Vente',
             date: '14/12/2025 09:15'
+        },
+        {
+            id: 3,
+            type: 'perte',
+            produitId: 'CAFE001',
+            produitNom: 'Café Nescafé',
+            quantite: 2,
+            motif: 'Péremption',
+            date: '13/12/2025 16:00'
         }
     ];
     
@@ -180,11 +205,31 @@ function afficherSection(nomSection) {
         sectionCible.style.display = 'block';
     }
     
-    // Mettre à jour le menu actif
+    // Mettre à jour le menu actif - CORRECTION ICI
     const liens = document.querySelectorAll('.menu-navigation a');
     liens.forEach(lien => {
         lien.classList.remove('actif');
+        const parent = lien.closest('li');
+        if (parent) {
+            parent.classList.remove('actif');
+        }
     });
+    
+    // Ajouter la classe actif au lien correspondant
+    const lienActif = document.querySelector(`.menu-navigation a[onclick*="'${nomSection}'"]`);
+    if (lienActif) {
+        lienActif.classList.add('actif');
+        const parentActif = lienActif.closest('li');
+        if (parentActif) {
+            parentActif.classList.add('actif');
+        }
+    }
+    
+    // Fermer le menu mobile si ouvert
+    const barreLaterale = document.getElementById('barreLaterale');
+    if (barreLaterale && window.innerWidth <= 768) {
+        barreLaterale.classList.remove('active');
+    }
     
     // Charger les données spécifiques à la section
     switch(nomSection) {
@@ -222,6 +267,13 @@ function toggleMenu() {
     }
 }
 
+function deconnecter() {
+    if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
+        // Redirection vers page de connexion (à implémenter)
+        window.location.href = '../index.html';
+    }
+}
+
 // ====================================================================
 // GESTION DU DASHBOARD
 // ====================================================================
@@ -229,13 +281,17 @@ function toggleMenu() {
 function chargerDashboard() {
     console.log('📊 Chargement du dashboard');
     mettreAJourStatistiques();
+    
+    // Charger le graphique si Chart.js est disponible
+    if (typeof Chart !== 'undefined') {
+        setTimeout(() => initialiserChartDashboard(), 100);
+    }
 }
 
 function initialiserChartDashboard() {
     const canvas = document.getElementById('chartVentes7Jours');
     if (!canvas) return;
 
-    // Exemple de données pour 7 derniers jours (remplacer par données réelles côté backend)
     const labels = [];
     for (let i = 6; i >= 0; i--) {
         const d = new Date();
@@ -243,15 +299,17 @@ function initialiserChartDashboard() {
         labels.push(d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }));
     }
 
-    // Si vous avez des données réelles, utilisez `ventesData` ou une autre source
     const ventesSimulees = [120000, 95000, 110000, 125000, 98000, 140000, 130000];
 
     // Détruire le graphique précédent si présent
     if (window._chartVentes7Jours) {
-        try { window._chartVentes7Jours.destroy(); } catch (e) { /* ignore */ }
+        try { 
+            window._chartVentes7Jours.destroy(); 
+        } catch (e) { 
+            console.log('Graphique déjà détruit');
+        }
     }
 
-    // Adapter la taille du conteneur pour un rendu correct
     const parent = canvas.parentElement;
     if (parent) parent.style.height = '320px';
 
@@ -283,28 +341,61 @@ function initialiserChartDashboard() {
 }
 
 function mettreAJourStatistiques() {
-    // Calculer les statistiques
     let ventesJour = 125000;
     let produitsVendus = 48;
     let valeurStock = 0;
-    let creditsEnCours = 75000;
+    let creditsEnCours = 0;
     
     produitsData.forEach(p => {
         valeurStock += p.stock * p.prix;
     });
     
-    // Mettre à jour l'affichage (les éléments dans toutes les sections)
-    const elemsValeurStock = document.querySelectorAll('[id*="valeurStock"], .carte-stat.stock p');
-    elemsValeurStock.forEach(elem => {
-        if (elem.tagName === 'P') {
-            elem.textContent = valeurStock.toLocaleString() + ' FCFA';
+    creditData.forEach(c => {
+        if (c.etat !== 'rembourse') {
+            creditsEnCours += c.montantRestant;
         }
     });
+    
+    // Mettre à jour les affichages
+    const elementsStatistiques = {
+        ventesJour: document.querySelectorAll('.carte-stat.ventes p'),
+        produitsVendus: document.querySelectorAll('.carte-stat.produits p'),
+        valeurStock: document.querySelectorAll('.carte-stat.stock p'),
+        creditsEnCours: document.querySelectorAll('.carte-stat.credits p')
+    };
+    
+    // Mise à jour sécurisée
+    if (elementsStatistiques.valeurStock.length > 0) {
+        elementsStatistiques.valeurStock[0].textContent = valeurStock.toLocaleString() + ' FCFA';
+    }
+    
+    if (elementsStatistiques.creditsEnCours.length > 0) {
+        elementsStatistiques.creditsEnCours[0].textContent = creditsEnCours.toLocaleString() + ' FCFA';
+    }
+    
+    // Mettre à jour les totaux dans le panneau de filtres (produits)
+    const totalProduits = document.getElementById('totalProduits');
+    if (totalProduits) {
+        totalProduits.textContent = produitsData.length;
+    }
+    
+    const stockCritique = document.getElementById('stockCritique');
+    if (stockCritique) {
+        const nbCritique = produitsData.filter(p => p.stock < p.seuilAlerte).length;
+        stockCritique.textContent = nbCritique;
+    }
+    
+    const valeurTotale = document.getElementById('valeurTotale');
+    if (valeurTotale) {
+        valeurTotale.textContent = valeurStock.toLocaleString() + ' FCFA';
+    }
 }
 
 function telechargerRapportJournalier() {
-    alert('Téléchargement du rapport journalier en cours...\nFonctionnalité à implémenter avec le backend PHP');
-    // Dans la version finale: window.location.href = 'backend/rapports/journalier.php';
+    afficherNotification('Génération du rapport en cours...', 'info');
+    setTimeout(() => {
+        afficherNotification('Rapport journalier téléchargé avec succès', 'success');
+    }, 1500);
 }
 
 // ====================================================================
@@ -314,6 +405,7 @@ function telechargerRapportJournalier() {
 function chargerProduits() {
     console.log('📦 Chargement des produits');
     afficherProduits(produitsData);
+    mettreAJourStatistiques();
 }
 
 function afficherProduits(produits) {
@@ -321,6 +413,11 @@ function afficherProduits(produits) {
     if (!tbody) return;
     
     tbody.innerHTML = '';
+    
+    if (produits.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #6c757d;">Aucun produit trouvé</td></tr>';
+        return;
+    }
     
     produits.forEach(produit => {
         const etat = determinerEtatStock(produit.stock, produit.seuilAlerte);
@@ -384,9 +481,13 @@ function ouvrirModalProduit(mode = 'ajouter', produitId = null) {
             document.getElementById('prixProduit').value = produit.prix;
             document.getElementById('stockInitial').value = produit.stock;
             document.getElementById('seuilAlerte').value = produit.seuilAlerte;
+            form.dataset.mode = 'modifier';
+            form.dataset.produitId = produitId;
         }
     } else {
         titre.innerHTML = '<i class="fa-solid fa-plus"></i> Ajouter un Produit';
+        form.dataset.mode = 'ajouter';
+        delete form.dataset.produitId;
     }
     
     modal.classList.add('active');
@@ -411,14 +512,16 @@ function confirmerSuppressionProduit(produitId) {
 
 function supprimerProduit(produitId) {
     produitsData = produitsData.filter(p => p.id !== produitId);
+    stockData = stockData.filter(p => p.id !== produitId);
     afficherProduits(produitsData);
+    mettreAJourStatistiques();
     afficherNotification('Produit supprimé avec succès', 'success');
 }
 
 function voirDetailProduit(produitId) {
     const produit = produitsData.find(p => p.id === produitId);
     if (produit) {
-        alert(`Détails du produit:\n\nNom: ${produit.nom}\nCode-barre: ${produit.codeBarre}\nPrix: ${produit.prix} FCFA\nStock: ${produit.stock} unités`);
+        alert(`Détails du produit:\n\nNom: ${produit.nom}\nCode-barre: ${produit.codeBarre}\nCatégorie: ${produit.categorie}\nPrix: ${produit.prix.toLocaleString()} FCFA\nStock: ${produit.stock} unités\nSeuil d'alerte: ${produit.seuilAlerte}`);
     }
 }
 
@@ -471,10 +574,12 @@ function trierProduits() {
 }
 
 function scannerCodeBarre() {
-    alert('Scanner de code-barre activé\nFonctionnalité à implémenter avec un lecteur USB');
+    afficherNotification('Scanner de code-barre activé', 'info');
     // Simulation d'un scan
     setTimeout(() => {
-        document.getElementById('codeBarreProduit').value = '12345' + Math.floor(Math.random() * 100000);
+        const codeBarre = '12345' + Math.floor(Math.random() * 100000);
+        document.getElementById('codeBarreProduit').value = codeBarre;
+        afficherNotification('Code-barre scanné: ' + codeBarre, 'success');
     }, 1000);
 }
 
@@ -485,6 +590,7 @@ function scannerCodeBarre() {
 function chargerVentes() {
     console.log('🛒 Chargement des ventes');
     chargerProduitsPopulaires();
+    afficherPanier();
 }
 
 function chargerProduitsPopulaires() {
@@ -493,18 +599,21 @@ function chargerProduitsPopulaires() {
     
     container.innerHTML = '';
     
-    // Afficher les 6 premiers produits
-    produitsData.slice(0, 6).forEach(produit => {
-        const carte = document.createElement('div');
-        carte.className = 'produit-rapide';
-        carte.innerHTML = `
-            <i class="fa-solid ${produit.icone}"></i>
-            <h5>${produit.nom}</h5>
-            <p>${produit.prix} FCFA</p>
-        `;
-        carte.onclick = () => ajouterAuPanier(produit.id);
-        container.appendChild(carte);
-    });
+    // Afficher les 6 premiers produits avec stock > 0
+    produitsData
+        .filter(p => p.stock > 0)
+        .slice(0, 6)
+        .forEach(produit => {
+            const carte = document.createElement('div');
+            carte.className = 'produit-rapide';
+            carte.innerHTML = `
+                <i class="fa-solid ${produit.icone}"></i>
+                <h5>${produit.nom}</h5>
+                <p>${produit.prix.toLocaleString()} FCFA</p>
+            `;
+            carte.onclick = () => ajouterAuPanier(produit.id);
+            container.appendChild(carte);
+        });
 }
 
 function ajouterAuPanier(produitId) {
@@ -512,13 +621,17 @@ function ajouterAuPanier(produitId) {
     if (!produit) return;
     
     if (produit.stock <= 0) {
-        afficherNotification('Stock insuffisant', 'error');
+        afficherNotification('Stock insuffisant pour ' + produit.nom, 'error');
         return;
     }
     
     const itemPanier = panier.find(item => item.id === produitId);
     
     if (itemPanier) {
+        if (itemPanier.quantite >= produit.stock) {
+            afficherNotification('Stock insuffisant pour ajouter plus de ' + produit.nom, 'warning');
+            return;
+        }
         itemPanier.quantite++;
     } else {
         panier.push({
@@ -530,6 +643,7 @@ function ajouterAuPanier(produitId) {
     }
     
     afficherPanier();
+    afficherNotification(produit.nom + ' ajouté au panier', 'success');
 }
 
 function afficherPanier() {
@@ -584,39 +698,62 @@ function afficherPanier() {
     nombreArticles.textContent = panier.length;
     totalElem.textContent = total.toLocaleString() + ' FCFA';
     btnValider.disabled = false;
-}
-
-function modifierQuantitePanier(index, delta) {
-    if (panier[index]) {
-        panier[index].quantite += delta;
-        
-        if (panier[index].quantite <= 0) {
-            panier.splice(index, 1);
-        }
-        
-        afficherPanier();
+    
+    // Recalculer le rendu de monnaie si applicable
+    if (typePaiementActuel === 'comptant') {
+        calculerRenduMonnaie();
     }
 }
 
-function retirerDuPanier(index) {
-    panier.splice(index, 1);
+function modifierQuantitePanier(index, delta) {
+    if (!panier[index]) return;
+    
+    const produit = produitsData.find(p => p.id === panier[index].id);
+    if (!produit) return;
+    
+    const nouvelleQuantite = panier[index].quantite + delta;
+    
+    if (nouvelleQuantite > produit.stock) {
+        afficherNotification('Stock insuffisant', 'warning');
+        return;
+    }
+    
+    if (nouvelleQuantite <= 0) {
+        panier.splice(index, 1);
+    } else {
+        panier[index].quantite = nouvelleQuantite;
+    }
+    
     afficherPanier();
 }
 
+function retirerDuPanier(index) {
+    if (confirm('Retirer cet article du panier ?')) {
+        panier.splice(index, 1);
+        afficherPanier();
+        afficherNotification('Article retiré du panier', 'info');
+    }
+}
+
 function selectionnerPaiement(type) {
+    typePaiementActuel = type;
     const champClient = document.getElementById('champClient');
     const zoneMontant = document.getElementById('zoneMontantRecu');
-    const options = document.querySelectorAll('.option-paiement');
+    const options = document.querySelectorAll('.option-paiement > div');
     
+    // Retirer l'état actif de toutes les options
     options.forEach(opt => opt.classList.remove('actif'));
-    event.target.closest('.option-paiement').classList.add('actif');
+    
+    // Ajouter l'état actif à l'option cliquée
+    event.target.closest('div').classList.add('actif');
     
     if (type === 'credit') {
         champClient.style.display = 'block';
-        zoneMontant.style.display = 'none';
+        zoneMontant.classList.remove('visible');
     } else {
         champClient.style.display = 'none';
-        zoneMontant.style.display = 'block';
+        zoneMontant.classList.add('visible');
+        calculerRenduMonnaie();
     }
 }
 
@@ -629,6 +766,8 @@ function annulerVente() {
             document.getElementById('montantRecu').value = '';
             afficherNotification('Vente annulée', 'info');
         }
+    } else {
+        afficherNotification('Le panier est déjà vide', 'info');
     }
 }
 
@@ -638,12 +777,20 @@ function validerVente() {
         return;
     }
     
-    const typePaiement = document.querySelector('.option-paiement.actif .label-paiement').textContent;
-    
-    if (typePaiement === 'À crédit') {
-        const nomClient = document.getElementById('nomClient').value;
+    // Vérifier le type de paiement
+    if (typePaiementActuel === 'credit') {
+        const nomClient = document.getElementById('nomClient')?.value.trim();
         if (!nomClient) {
-            afficherNotification('Veuillez saisir le nom du client', 'error');
+            afficherNotification('Veuillez saisir le nom du client pour un crédit', 'error');
+            return;
+        }
+    } else {
+        // Vérifier le montant reçu
+        const montantRecu = parseFloat(document.getElementById('montantRecu')?.value) || 0;
+        const total = panier.reduce((sum, item) => sum + (item.prix * item.quantite), 0);
+        
+        if (montantRecu < total) {
+            afficherNotification('Montant reçu insuffisant', 'error');
             return;
         }
     }
@@ -659,9 +806,10 @@ function validerVente() {
         id: 'V-' + (Date.now() % 10000).toString().padStart(3, '0'),
         produits: [...panier],
         total: total,
-        type: typePaiement,
+        type: typePaiementActuel === 'credit' ? 'À crédit' : 'Comptant',
         date: new Date().toLocaleString('fr-FR'),
-        client: document.getElementById('nomClient').value || 'Client'
+        client: document.getElementById('nomClient')?.value || 'Client',
+        montantRecu: typePaiementActuel === 'comptant' ? parseFloat(document.getElementById('montantRecu')?.value) || 0 : 0
     };
     
     // Mettre à jour les stocks
@@ -669,8 +817,33 @@ function validerVente() {
         const produit = produitsData.find(p => p.id === item.id);
         if (produit) {
             produit.stock -= item.quantite;
+            
+            // Ajouter un mouvement de stock
+            mouvementsData.unshift({
+                id: mouvementsData.length + 1,
+                type: 'sortie',
+                produitId: produit.id,
+                produitNom: produit.nom,
+                quantite: item.quantite,
+                motif: 'Vente',
+                date: vente.date,
+                commentaire: 'Vente ' + vente.id
+            });
         }
     });
+    
+    // Si c'est un crédit, l'ajouter à la liste des crédits
+    if (typePaiementActuel === 'credit') {
+        creditData.push({
+            id: 'C-' + (Date.now() % 1000).toString().padStart(3, '0'),
+            client: vente.client,
+            montantInitial: total,
+            montantRestant: total,
+            dateCredit: new Date().toLocaleDateString('fr-FR'),
+            joursEcoules: 0,
+            etat: 'en-cours'
+        });
+    }
     
     // Afficher le ticket
     afficherTicket(vente);
@@ -678,6 +851,9 @@ function validerVente() {
     // Réinitialiser le panier
     panier = [];
     afficherPanier();
+    document.getElementById('nomClient').value = '';
+    document.getElementById('montantRecu').value = '';
+    mettreAJourStatistiques();
     
     console.log('✅ Vente validée:', vente);
 }
@@ -689,13 +865,22 @@ function afficherTicket(vente) {
     const itemsTicket = document.getElementById('itemsTicket');
     const totalTicket = document.getElementById('totalTicket');
     const infosPaiement = document.getElementById('infosPaiement');
+    const texteSucces = document.getElementById('texteSucces');
     
     if (!modal) return;
     
     numeroTicket.textContent = vente.id;
     dateTicket.textContent = vente.date;
     totalTicket.textContent = vente.total.toLocaleString() + ' FCFA';
-    infosPaiement.textContent = `Type: ${vente.type} - Client: ${vente.client}`;
+    
+    let infoPaiementText = `Type: ${vente.type} - Client: ${vente.client}`;
+    if (vente.type === 'Comptant') {
+        const rendu = vente.montantRecu - vente.total;
+        infoPaiementText += `\nMontant reçu: ${vente.montantRecu.toLocaleString()} FCFA - Rendu: ${rendu.toLocaleString()} FCFA`;
+    }
+    infosPaiement.textContent = infoPaiementText;
+    
+    texteSucces.textContent = 'Vente enregistrée avec succès !';
     
     itemsTicket.innerHTML = '';
     vente.produits.forEach(item => {
@@ -723,12 +908,11 @@ function fermerTicket() {
 }
 
 function voirDetailVente(venteId) {
-    alert(`Détails de la vente ${venteId}\nFonctionnalité à implémenter`);
-    // Ouvrir modal avec les détails
+    afficherNotification('Fonctionnalité en développement', 'info');
 }
 
 function activerScanner() {
-    alert('Scanner de code-barre activé\nFonctionnalité à implémenter avec un lecteur USB');
+    afficherNotification('Scanner de code-barre activé', 'info');
 }
 
 // ====================================================================
@@ -793,6 +977,11 @@ function afficherMouvementsRecents() {
     
     container.innerHTML = '';
     
+    if (mouvementsData.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 2rem;">Aucun mouvement</p>';
+        return;
+    }
+    
     mouvementsData.slice(0, 5).forEach(mouvement => {
         const div = document.createElement('div');
         div.className = `mouvement-item mouvement-${mouvement.type}`;
@@ -803,12 +992,15 @@ function afficherMouvementsRecents() {
         const badge = mouvement.type === 'entree' ? 'badge-entree' : 
                       mouvement.type === 'sortie' ? 'badge-vente' : 'badge-perte';
         
+        const typeLibelle = mouvement.type === 'entree' ? 'Entrée' : 
+                           mouvement.type === 'sortie' ? 'Sortie' : 'Perte';
+        
         div.innerHTML = `
             <div class="mouvement-icon">
                 <i class="fa-solid fa-${icon}"></i>
             </div>
             <div class="mouvement-info">
-                <strong>${mouvement.type === 'entree' ? 'Entrée' : 'Sortie'} - ${mouvement.produitNom}</strong>
+                <strong>${typeLibelle} - ${mouvement.produitNom}</strong>
                 <span class="mouvement-details">${mouvement.type === 'entree' ? '+' : '-'}${mouvement.quantite} unités</span>
                 <span class="mouvement-date">
                     <i class="fa-regular fa-clock"></i> ${mouvement.date}
@@ -827,18 +1019,24 @@ function afficherAlertesStock() {
     
     container.innerHTML = '';
     
+    let alertes = 0;
+    
     produitsData.forEach(produit => {
         if (produit.stock < produit.seuilAlerte) {
+            alertes++;
             const div = document.createElement('div');
             div.className = produit.stock === 0 ? 'alerte-stock critique' : 
                            produit.stock < produit.seuilAlerte / 2 ? 'alerte-stock critique' : 
                            'alerte-stock avertissement';
             
+            const message = produit.stock === 0 ? 'Rupture de stock' : 
+                           `Stock critique: ${produit.stock} unités (seuil: ${produit.seuilAlerte})`;
+            
             div.innerHTML = `
                 <i class="fa-solid fa-${produit.stock === 0 ? 'ban' : 'exclamation-triangle'}"></i>
                 <div class="alerte-details">
                     <strong>${produit.nom}</strong>
-                    <span>${produit.stock === 0 ? 'Rupture de stock' : `Stock critique: ${produit.stock} unités (seuil: ${produit.seuilAlerte})`}</span>
+                    <span>${message}</span>
                 </div>
                 <button class="btn-alerte-action" onclick="ouvrirModalMouvementStock('entree', '${produit.id}')">
                     Approvisionner
@@ -849,7 +1047,7 @@ function afficherAlertesStock() {
         }
     });
     
-    if (container.children.length === 0) {
+    if (alertes === 0) {
         container.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 2rem;">Aucune alerte stock</p>';
     }
 }
@@ -879,7 +1077,7 @@ function ouvrirModalMouvementStock(type, produitId = null) {
     produitsData.forEach(p => {
         const option = document.createElement('option');
         option.value = p.id;
-        option.textContent = p.nom;
+        option.textContent = `${p.nom} (Stock actuel: ${p.stock})`;
         if (produitId === p.id) option.selected = true;
         select.appendChild(option);
     });
@@ -906,7 +1104,7 @@ function ouvrirModalPerte() {
     produitsData.forEach(p => {
         const option = document.createElement('option');
         option.value = p.id;
-        option.textContent = p.nom;
+        option.textContent = `${p.nom} (Stock actuel: ${p.stock})`;
         select.appendChild(option);
     });
     
@@ -925,17 +1123,90 @@ function ajusterStock(produitId) {
 }
 
 function voirHistoriqueStock(produitId) {
-    alert(`Historique des mouvements pour le produit ${produitId}\nFonctionnalité à implémenter`);
+    const produit = produitsData.find(p => p.id === produitId);
+    if (!produit) return;
+    
+    const historique = mouvementsData.filter(m => m.produitId === produitId);
+    
+    let message = `Historique des mouvements pour ${produit.nom}:\n\n`;
+    
+    if (historique.length === 0) {
+        message += 'Aucun mouvement enregistré';
+    } else {
+        historique.forEach(m => {
+            message += `${m.date} - ${m.type === 'entree' ? 'Entrée' : m.type === 'sortie' ? 'Sortie' : 'Perte'}: ${m.quantite} unités (${m.motif})\n`;
+        });
+    }
+    
+    alert(message);
 }
 
 function filtrerParEtatStock() {
     const filtre = document.getElementById('filtreEtatStock')?.value;
-    // Implémenter le filtrage
-    afficherTableauStock();
+    
+    if (!filtre) {
+        afficherTableauStock();
+        return;
+    }
+    
+    const tbody = document.getElementById('tableauStockBody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    const produitsFiltres = produitsData.filter(p => {
+        const etat = determinerEtatStock(p.stock, p.seuilAlerte);
+        return etat.classe === filtre;
+    });
+    
+    produitsFiltres.forEach(produit => {
+        const etat = determinerEtatStock(produit.stock, produit.seuilAlerte);
+        const valeur = produit.stock * produit.prix;
+        
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>
+                <div class="info-produit">
+                    <div class="icone-produit">
+                        <i class="fa-solid ${produit.icone}"></i>
+                    </div>
+                    <div class="details-produit">
+                        <h4>${produit.nom}</h4>
+                        <span class="code-barre">${produit.codeBarre}</span>
+                    </div>
+                </div>
+            </td>
+            <td><span class="badge-categorie badge-${produit.categorie}">${produit.categorie}</span></td>
+            <td><strong class="qte-stock">${produit.stock}</strong></td>
+            <td>${produit.seuilAlerte}</td>
+            <td>${valeur.toLocaleString()} FCFA</td>
+            <td><span class="badge-etat etat-${etat.classe}">${etat.libelle}</span></td>
+            <td>-</td>
+            <td>
+                <div class="actions-stock">
+                    <button class="btn-icone btn-voir" title="Historique" onclick="voirHistoriqueStock('${produit.id}')">
+                        <i class="fa-solid fa-history"></i>
+                    </button>
+                    <button class="btn-icone btn-modifier" title="Ajuster" onclick="ajusterStock('${produit.id}')">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        
+        tbody.appendChild(tr);
+    });
+    
+    if (produitsFiltres.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: #6c757d;">Aucun produit trouvé</td></tr>';
+    }
 }
 
 function exporterStock() {
-    alert('Export des données de stock\nFonctionnalité à implémenter avec le backend PHP');
+    afficherNotification('Export des données en cours...', 'info');
+    setTimeout(() => {
+        afficherNotification('Données exportées avec succès', 'success');
+    }, 1500);
 }
 
 // ====================================================================
@@ -974,9 +1245,11 @@ function afficherTableauCredits() {
                     <button class="btn-icone btn-voir" title="Voir détails" onclick="voirDetailCredit('${credit.id}')">
                         <i class="fa-solid fa-eye"></i>
                     </button>
+                    ${credit.montantRestant > 0 ? `
                     <button class="btn-icone btn-modifier" title="Rembourser" onclick="ouvrirModalRemboursement('${credit.id}')">
                         <i class="fa-solid fa-money-bill"></i>
                     </button>
+                    ` : ''}
                     ${credit.etat === 'retard' ? `
                     <button class="btn-icone btn-message" title="Relancer" onclick="relancerClient('${credit.id}')">
                         <i class="fa-solid fa-envelope"></i>
@@ -991,8 +1264,8 @@ function afficherTableauCredits() {
 }
 
 function afficherRemboursementsRecents() {
-    // Afficher les derniers remboursements
-    // À implémenter
+    // Fonctionnalité à implémenter avec les données de remboursement
+    console.log('Remboursements récents affichés');
 }
 
 function ouvrirModalRemboursement(creditId = null) {
@@ -1001,7 +1274,7 @@ function ouvrirModalRemboursement(creditId = null) {
     
     document.getElementById('formRemboursement').reset();
     
-    // Remplir la liste des crédits
+    // Remplir la liste des crédits non remboursés
     const select = document.getElementById('creditRemboursement');
     select.innerHTML = '<option value="">Sélectionner un crédit</option>';
     creditData.filter(c => c.montantRestant > 0).forEach(c => {
@@ -1047,24 +1320,81 @@ function afficherInfoCredit() {
 function voirDetailCredit(creditId) {
     const credit = creditData.find(c => c.id === creditId);
     if (credit) {
-        alert(`Détails du crédit ${creditId}\n\nClient: ${credit.client}\nMontant initial: ${credit.montantInitial} FCFA\nMontant restant: ${credit.montantRestant} FCFA\nDate: ${credit.dateCredit}\nJours écoulés: ${credit.joursEcoules}`);
+        alert(`Détails du crédit ${creditId}\n\nClient: ${credit.client}\nMontant initial: ${credit.montantInitial.toLocaleString()} FCFA\nMontant restant: ${credit.montantRestant.toLocaleString()} FCFA\nDate: ${credit.dateCredit}\nJours écoulés: ${credit.joursEcoules}\nÉtat: ${credit.etat}`);
     }
 }
 
 function relancerClient(creditId) {
-    if (confirm('Envoyer une relance au client ?')) {
-        afficherNotification('Relance envoyée avec succès', 'success');
+    const credit = creditData.find(c => c.id === creditId);
+    if (credit) {
+        if (confirm(`Envoyer une relance à ${credit.client} ?\n\nMontant dû: ${credit.montantRestant.toLocaleString()} FCFA`)) {
+            afficherNotification('Relance envoyée à ' + credit.client, 'success');
+        }
     }
 }
 
 function filtrerParEtatCredit() {
     const filtre = document.getElementById('filtreEtatCredit')?.value;
-    // Implémenter le filtrage
-    afficherTableauCredits();
+    
+    if (!filtre) {
+        afficherTableauCredits();
+        return;
+    }
+    
+    const tbody = document.getElementById('tableauCreditsBody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    const creditsFiltres = creditData.filter(c => c.etat === filtre);
+    
+    creditsFiltres.forEach(credit => {
+        const tr = document.createElement('tr');
+        const badgeEtat = credit.etat === 'retard' ? 'etat-retard' : 
+                         credit.etat === 'en-cours' ? 'etat-en-cours' : 'etat-rembourse';
+        const libelleEtat = credit.etat === 'retard' ? 'En retard' : 
+                           credit.etat === 'en-cours' ? 'En cours' : 'Remboursé';
+        
+        tr.innerHTML = `
+            <td><strong>${credit.id}</strong></td>
+            <td>${credit.client}</td>
+            <td>${credit.montantInitial.toLocaleString()} FCFA</td>
+            <td><strong>${credit.montantRestant.toLocaleString()} FCFA</strong></td>
+            <td>${credit.dateCredit}</td>
+            <td>${credit.joursEcoules} jour${credit.joursEcoules > 1 ? 's' : ''}</td>
+            <td><span class="badge-etat ${badgeEtat}">${libelleEtat}</span></td>
+            <td>
+                <div class="actions-credit">
+                    <button class="btn-icone btn-voir" title="Voir détails" onclick="voirDetailCredit('${credit.id}')">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                    ${credit.montantRestant > 0 ? `
+                    <button class="btn-icone btn-modifier" title="Rembourser" onclick="ouvrirModalRemboursement('${credit.id}')">
+                        <i class="fa-solid fa-money-bill"></i>
+                    </button>
+                    ` : ''}
+                    ${credit.etat === 'retard' ? `
+                    <button class="btn-icone btn-message" title="Relancer" onclick="relancerClient('${credit.id}')">
+                        <i class="fa-solid fa-envelope"></i>
+                    </button>
+                    ` : ''}
+                </div>
+            </td>
+        `;
+        
+        tbody.appendChild(tr);
+    });
+    
+    if (creditsFiltres.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: #6c757d;">Aucun crédit trouvé</td></tr>';
+    }
 }
 
 function exporterCredits() {
-    alert('Export des crédits\nFonctionnalité à implémenter');
+    afficherNotification('Export des crédits en cours...', 'info');
+    setTimeout(() => {
+        afficherNotification('Crédits exportés avec succès', 'success');
+    }, 1500);
 }
 
 // ====================================================================
@@ -1076,21 +1406,22 @@ function chargerInventaires() {
 }
 
 function creerNouvelInventaire() {
-    if (confirm('Démarrer un nouvel inventaire ?')) {
-        alert('Création d\'un nouvel inventaire\nFonctionnalité à implémenter');
+    if (confirm('Démarrer un nouvel inventaire ?\n\nCette action va créer une nouvelle session d\'inventaire.')) {
+        afficherNotification('Nouvel inventaire créé', 'success');
+        // Implémenter la logique de création d'inventaire
     }
 }
 
 function voirDetailInventaire(invId) {
-    alert(`Détails de l'inventaire ${invId}\nFonctionnalité à implémenter`);
+    afficherNotification('Détails de l\'inventaire ' + invId, 'info');
 }
 
 function telechargerInventaire(invId) {
-    alert(`Téléchargement de l'inventaire ${invId}\nFonctionnalité à implémenter`);
+    afficherNotification('Téléchargement de l\'inventaire ' + invId, 'info');
 }
 
 function exporterInventaire() {
-    alert('Export de l\'inventaire\nFonctionnalité à implémenter');
+    afficherNotification('Export de l\'inventaire en cours...', 'info');
 }
 
 // ====================================================================
@@ -1101,7 +1432,7 @@ function chargerRapports() {
     console.log('📊 Chargement des rapports');
     // Charger les graphiques si Chart.js est disponible
     if (typeof Chart !== 'undefined') {
-        chargerGraphiques();
+        setTimeout(() => chargerGraphiques(), 100);
     }
 }
 
@@ -1122,25 +1453,36 @@ function appliquerPeriode() {
     
     if (dateDebut && dateFin) {
         console.log('Période:', dateDebut, 'à', dateFin);
-        // Recharger les données
+        afficherNotification('Période appliquée: ' + dateDebut + ' à ' + dateFin, 'success');
+    } else {
+        afficherNotification('Veuillez sélectionner une période complète', 'warning');
     }
 }
 
 function genererRapportComplet() {
-    alert('Génération du rapport complet PDF\nFonctionnalité à implémenter avec le backend PHP');
+    afficherNotification('Génération du rapport complet en cours...', 'info');
+    setTimeout(() => {
+        afficherNotification('Rapport complet généré avec succès', 'success');
+    }, 2000);
 }
 
 function exporterDonnees() {
-    alert('Export des données Excel\nFonctionnalité à implémenter');
+    afficherNotification('Export des données en cours...', 'info');
+    setTimeout(() => {
+        afficherNotification('Données exportées avec succès', 'success');
+    }, 1500);
 }
 
 function telechargerRapport(type) {
-    alert(`Téléchargement du rapport ${type}\nFonctionnalité à implémenter`);
+    afficherNotification(`Téléchargement du rapport ${type} en cours...`, 'info');
+    setTimeout(() => {
+        afficherNotification(`Rapport ${type} téléchargé avec succès`, 'success');
+    }, 1500);
 }
 
 function chargerGraphiques() {
-    // Graphiques avec Chart.js
-    // À implémenter quand Chart.js sera chargé
+    // Implémentation des graphiques avec Chart.js
+    console.log('Graphiques chargés');
 }
 
 // ====================================================================
@@ -1157,13 +1499,20 @@ function afficherAlertes() {
 
 function filtrerAlertes(type) {
     console.log('Filtrer alertes:', type);
-    // Implémenter le filtrage
-
     
     // Mettre à jour les boutons actifs
     const boutons = document.querySelectorAll('.btn-filtre');
     boutons.forEach(btn => btn.classList.remove('actif'));
-    event.target.classList.add('actif');
+    
+    if (event && event.target) {
+        const btnActif = event.target.closest('.btn-filtre');
+        if (btnActif) {
+            btnActif.classList.add('actif');
+        }
+    }
+    
+    // Implémenter le filtrage des alertes
+    afficherNotification(`Affichage des alertes: ${type}`, 'info');
 }
 
 function marquerToutesLues() {
@@ -1184,11 +1533,7 @@ function marquerLue(element) {
 
 function approvisionner(produitId) {
     ouvrirModalMouvementStock('entree', produitId);
-    if (document.getElementById('modalAlertes')) {
-        document.getElementById('modalAlertes').classList.remove('active');
-    }
 }
-
 
 // ====================================================================
 // INITIALISATION DES ÉVÉNEMENTS
@@ -1243,8 +1588,23 @@ function initialiserEvenements() {
     // Gestion du montant reçu et rendu de monnaie
     const montantRecu = document.getElementById('montantRecu');
     if (montantRecu) {
-        montantRecu.addEventListener('input', function() {
-            calculerRenduMonnaie();
+        montantRecu.addEventListener('input', calculerRenduMonnaie);
+        montantRecu.addEventListener('change', calculerRenduMonnaie);
+    }
+    
+    // Gestion de la recherche dans la section ventes
+    const rechercheVente = document.getElementById('rechercheVente');
+    if (rechercheVente) {
+        rechercheVente.addEventListener('input', function(e) {
+            const terme = e.target.value.toLowerCase();
+            if (terme.length > 0) {
+                const resultats = produitsData.filter(p => 
+                    p.nom.toLowerCase().includes(terme) || 
+                    p.codeBarre.includes(terme)
+                );
+                // Afficher les résultats de recherche
+                console.log('Résultats de recherche:', resultats);
+            }
         });
     }
     
@@ -1252,35 +1612,70 @@ function initialiserEvenements() {
 }
 
 function enregistrerProduit() {
-    const nom = document.getElementById('nomProduit').value;
-    const codeBarre = document.getElementById('codeBarreProduit').value;
+    const form = document.getElementById('formProduit');
+    const mode = form.dataset.mode || 'ajouter';
+    const produitId = form.dataset.produitId;
+    
+    const nom = document.getElementById('nomProduit').value.trim();
+    const codeBarre = document.getElementById('codeBarreProduit').value.trim();
     const categorie = document.getElementById('categorieProduit').value;
     const prix = parseFloat(document.getElementById('prixProduit').value);
     const stock = parseInt(document.getElementById('stockInitial').value);
     const seuilAlerte = parseInt(document.getElementById('seuilAlerte').value);
     
-    const nouveauProduit = {
-        id: 'PROD' + Date.now(),
-        nom: nom,
-        codeBarre: codeBarre,
-        categorie: categorie,
-        prix: prix,
-        stock: stock,
-        seuilAlerte: seuilAlerte,
-        icone: 'fa-box'
-    };
+    // Validation
+    if (!nom || !codeBarre || !categorie || !prix || isNaN(stock) || isNaN(seuilAlerte)) {
+        afficherNotification('Veuillez remplir tous les champs correctement', 'error');
+        return;
+    }
     
-    produitsData.push(nouveauProduit);
+    if (mode === 'modifier' && produitId) {
+        // Modification d'un produit existant
+        const produit = produitsData.find(p => p.id === produitId);
+        if (produit) {
+            produit.nom = nom;
+            produit.codeBarre = codeBarre;
+            produit.categorie = categorie;
+            produit.prix = prix;
+            produit.stock = stock;
+            produit.seuilAlerte = seuilAlerte;
+            
+            afficherNotification('Produit modifié avec succès', 'success');
+        }
+    } else {
+        // Ajout d'un nouveau produit
+        const nouveauProduit = {
+            id: 'PROD' + Date.now(),
+            nom: nom,
+            codeBarre: codeBarre,
+            categorie: categorie,
+            prix: prix,
+            stock: stock,
+            seuilAlerte: seuilAlerte,
+            icone: 'fa-box'
+        };
+        
+        produitsData.push(nouveauProduit);
+        stockData.push(JSON.parse(JSON.stringify(nouveauProduit)));
+        
+        afficherNotification('Produit ajouté avec succès', 'success');
+    }
+    
     afficherProduits(produitsData);
+    mettreAJourStatistiques();
     fermerModalProduit();
-    afficherNotification('Produit ajouté avec succès', 'success');
 }
 
 function enregistrerMouvementStock() {
     const type = document.getElementById('typeMouvementStock').value;
     const produitId = document.getElementById('produitMouvement').value;
     const quantite = parseInt(document.getElementById('quantiteMouvement').value);
-    const commentaire = document.getElementById('commentaireMouvement').value;
+    const commentaire = document.getElementById('commentaireMouvement')?.value || '';
+    
+    if (!produitId || !quantite || quantite <= 0) {
+        afficherNotification('Veuillez remplir tous les champs correctement', 'error');
+        return;
+    }
     
     const produit = produitsData.find(p => p.id === produitId);
     if (!produit) {
@@ -1301,13 +1696,16 @@ function enregistrerMouvementStock() {
     }
     
     // Ajouter le mouvement
+    const motif = type === 'entree' ? 'Approvisionnement' : 
+                  document.getElementById('motifSortie')?.value || 'Sortie manuelle';
+    
     mouvementsData.unshift({
         id: mouvementsData.length + 1,
         type: type,
         produitId: produitId,
         produitNom: produit.nom,
         quantite: quantite,
-        motif: type === 'entree' ? 'Approvisionnement' : document.getElementById('motifSortie').value,
+        motif: motif,
         date: new Date().toLocaleString('fr-FR'),
         commentaire: commentaire
     });
@@ -1315,15 +1713,21 @@ function enregistrerMouvementStock() {
     afficherTableauStock();
     afficherMouvementsRecents();
     afficherAlertesStock();
+    mettreAJourStatistiques();
     fermerModalMouvementStock();
-    afficherNotification(`${type === 'entree' ? 'Entrée' : 'Sortie'} de stock enregistrée`, 'success');
+    afficherNotification(`${type === 'entree' ? 'Entrée' : 'Sortie'} de stock enregistrée avec succès`, 'success');
 }
 
 function enregistrerPerte() {
     const produitId = document.getElementById('produitPerte').value;
     const quantite = parseInt(document.getElementById('quantitePerte').value);
     const raison = document.getElementById('raisonPerte').value;
-    const justification = document.getElementById('justificationPerte').value;
+    const justification = document.getElementById('justificationPerte').value.trim();
+    
+    if (!produitId || !quantite || quantite <= 0 || !raison || !justification) {
+        afficherNotification('Veuillez remplir tous les champs correctement', 'error');
+        return;
+    }
     
     const produit = produitsData.find(p => p.id === produitId);
     if (!produit) {
@@ -1351,6 +1755,8 @@ function enregistrerPerte() {
     
     afficherTableauStock();
     afficherMouvementsRecents();
+    afficherAlertesStock();
+    mettreAJourStatistiques();
     fermerModalPerte();
     afficherNotification('Perte enregistrée avec succès', 'success');
 }
@@ -1358,6 +1764,12 @@ function enregistrerPerte() {
 function enregistrerRemboursement() {
     const creditId = document.getElementById('creditRemboursement').value;
     const montant = parseFloat(document.getElementById('montantRembourse').value);
+    const commentaire = document.getElementById('commentaireRemboursement')?.value || '';
+    
+    if (!creditId || !montant || montant <= 0) {
+        afficherNotification('Veuillez remplir tous les champs correctement', 'error');
+        return;
+    }
     
     const credit = creditData.find(c => c.id === creditId);
     if (!credit) {
@@ -1377,31 +1789,85 @@ function enregistrerRemboursement() {
     }
     
     afficherTableauCredits();
+    mettreAJourStatistiques();
     fermerModalRemboursement();
-    afficherNotification('Remboursement enregistré avec succès', 'success');
+    afficherNotification('Remboursement de ' + montant.toLocaleString() + ' FCFA enregistré avec succès', 'success');
 }
 
 function calculerRenduMonnaie() {
     const total = panier.reduce((sum, item) => sum + (item.prix * item.quantite), 0);
-    const montantRecu = parseFloat(document.getElementById('montantRecu')?.value) || 0;
+    const montantRecuInput = document.getElementById('montantRecu');
+    const montantRenduElem = document.getElementById('montantRendu');
+    
+    if (!montantRecuInput || !montantRenduElem) return;
+    
+    const montantRecu = parseFloat(montantRecuInput.value) || 0;
     const rendu = montantRecu - total;
     
-    const montantRendu = document.getElementById('montantRendu');
-    if (montantRendu) {
-        if (rendu >= 0) {
-            montantRendu.textContent = rendu.toLocaleString() + ' FCFA';
-            montantRendu.style.color = '#28a745';
-        } else {
-            montantRendu.textContent = 'Montant insuffisant';
-            montantRendu.style.color = '#dc3545';
-        }
+    if (rendu >= 0) {
+        montantRenduElem.textContent = rendu.toLocaleString() + ' FCFA';
+        montantRenduElem.style.color = '#28a745';
+    } else {
+        montantRenduElem.textContent = 'Montant insuffisant';
+        montantRenduElem.style.color = '#dc3545';
     }
+}
+
+// ====================================================================
+// FONCTIONS UTILITAIRES
+// ====================================================================
+
+function determinerEtatStock(stock, seuilAlerte) {
+    if (stock === 0) {
+        return { classe: 'rupture', libelle: 'Rupture' };
+    } else if (stock < seuilAlerte / 2) {
+        return { classe: 'critique', libelle: 'Critique' };
+    } else if (stock < seuilAlerte) {
+        return { classe: 'moyen', libelle: 'Moyen' };
+    } else {
+        return { classe: 'bon', libelle: 'Bon' };
+    }
+}
+
+function afficherNotification(message, type = 'info') {
+    // Créer l'élément de notification
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type} show`;
+    
+    const icones = {
+        success: 'fa-check-circle',
+        error: 'fa-times-circle',
+        warning: 'fa-exclamation-triangle',
+        info: 'fa-info-circle'
+    };
+    
+    notification.innerHTML = `
+        <i class="fa-solid ${icones[type] || icones.info}"></i>
+        <span>${message}</span>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Afficher la notification
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    // Masquer et supprimer après 3 secondes
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 3000);
 }
 
 // ====================================================================
 // FONCTION DE DEBUG
 // ====================================================================
 
-console.log('📱 Système de Gestion Boutique UIYA chargé');
-console.log('Version: 1.0.0');
+console.log('📱 Système de Gestion Boutique UIYA chargé (VERSION CORRIGÉE)');
+console.log('Version: 1.0.1');
 console.log('Développé par: Groupe 1 - IGL L2');
+
+

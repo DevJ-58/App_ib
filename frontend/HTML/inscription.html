@@ -1,65 +1,110 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>inscription_Bib</title>
+    <meta name="description" content="Inscription à la plateforme de gestion UIYA">
     <link rel="stylesheet" href="../CSS/auth.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Inscription - Boutique UIYA</title>
 </head>
 <body>
+    <!-- En-tête fixe -->
     <div class="struct">
-        <i class="fa-solid fa-boxes-stacked"></i>
-        <h1>le IB en kinmin</h1>
+        <i class="fa-solid fa-store"></i>
+        <h1>Boutique UIYA - Gestion de Stock</h1>
     </div>
+
+    <!-- Conteneur principal -->
     <div class="container">
         <form action="../../backend/inscription.php" method="POST">
-                <h1>Inscription </h1>
+            <h1>Inscription</h1>
+            
             <div class="detail-user">
+                <!-- Colonne 1 -->
                 <div class="colonne">
                     <div class="zone-saisie">
-                       <!-- <span class="details">Nom: </span> -->
-                       <input type="text" name="nom_user" placeholder="Entrer votre nom" required>
+                        <input 
+                            type="text" 
+                            name="nom_user" 
+                            placeholder="Nom" 
+                            required
+                            autocomplete="family-name"
+                            minlength="2">
                     </div>
                     <div class="zone-saisie">
-                       <!-- <span class="details">Prénom: </span> -->
-                       <input type="text" name="prenom_user" placeholder="Entrer votre prénom" required>
+                        <input 
+                            type="text" 
+                            name="prenom_user" 
+                            placeholder="Prénom" 
+                            required
+                            autocomplete="given-name"
+                            minlength="2">
                     </div>
                     <div class="zone-saisie">
-                       <!-- <span class="details">Numero</span> -->
-                       <input type="number" name="numero" placeholder="Entrer votre numero" required>
+                        <input 
+                            type="number" 
+                            name="numero" 
+                            placeholder="Numéro de téléphone" 
+                            required
+                            autocomplete="tel"
+                            pattern="[0-9]{10}"
+                            title="Veuillez entrer un numéro valide (10 chiffres)">
                     </div>
                 </div>
+                
+                <!-- Colonne 2 -->
                 <div class="colonne">
                     <div class="zone-saisie">
-                       <!-- <span class="details">Email: </span> -->
-                       <input type="email" name="email_user" placeholder="Entrer votre email" required>
+                        <input 
+                            type="email" 
+                            name="email_user" 
+                            placeholder="Email" 
+                            required
+                            autocomplete="email">
                     </div>
                     <div class="zone-saisie">
-                       <!-- <span class="details">Mot de passe: </span> -->
-                       <input type="password" name="password_user" placeholder="Entrer votre mot de passe" required>
+                        <input 
+                            type="password" 
+                            name="password_user" 
+                            placeholder="Mot de passe" 
+                            required
+                            autocomplete="new-password"
+                            minlength="6"
+                            title="Au moins 6 caractères">
                     </div>
                     <div class="zone-saisie">
-                       <!-- <span class="details">Confirmer mot de passe: </span> -->
-                       <input type="password" name="confirm_password" placeholder="Confirmer votre mot de passe" required>
+                        <input 
+                            type="password" 
+                            name="confirm_password" 
+                            placeholder="Confirmer le mot de passe" 
+                            required
+                            autocomplete="new-password"
+                            minlength="6">
                     </div>
                 </div>
             </div>
-            <input type="submit" name="sm_form" value="S'inscrire" onclick="Opendash()">
+
+            <input 
+                type="submit" 
+                name="sm_form" 
+                value="S'inscrire" 
+                onclick="Opendash()">
+
             <div class="lastF">
                 <div class="redirect">
-                  <!-- <a href="resetpassword.html">mot de passe oublié ?</a> -->
-                  <span>Déjà un compte? <a href="connexion.html">se connecter</a></span>
+                    <span>Déjà un compte ? <a href="connexion.html">Se connecter</a></span>
                 </div>
                 <div class="icon_anim">
-                     <i class="fa-solid fa-boxes-stacked"></i>
+                    <i class="fa-solid fa-boxes-stacked"></i>
                 </div>
             </div>
-            
         </form>
     </div>
-    
+
+    <script src="../JS/main.js"></script>
 </body>
 </html>
