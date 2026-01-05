@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion Boutique UIYA - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../CSS/dashbord.css">
+</head>
+<body>
+    <!-- En-tête de navigation -->
+    <header class="zone-navigation">
+        <div class="logo-navigation">
+            <i class="fa-solid fa-store"></i>
+            <div>
+                <h1>Boutique UIYA</h1>
+                <div class="sous-titre">Système de Gestion de Stock</div>
+            </div>
+        </div>
+        <div class="elements-entete">
+            <!-- Icône de notification -->
+            <div class="notification" title="5 alertes" onclick="afficherAlertes()">
+                <i class="fa-regular fa-bell"></i>
+                <span class="nombre-notifications">5</span>
+            </div>
+            <!-- Photo de profil -->
+            <div class="profil">
+                <img src="https://via.placeholder.com/40" alt="Photo de profil">
+                <span class="nom-utilisateur">Mr IB</span>
+            </div>
+            <!-- Menu burger pour mobile -->
+            <div class="menu-burger" onclick="toggleMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenu principal -->
+    <div class="contenu-principal">
+        <!-- Barre latérale -->
+        <aside class="barre-laterale" id="barreLaterale">
+            <nav class="menu-navigation">
+                <ul>
+                    <li>
+                        <a href="#" class="actif" onclick="afficherSection('dashboard')">
+                            <i class="fa-solid fa-gauge"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="afficherSection('produits')">
+                            <i class="fa-solid fa-box-open"></i>
+                            <span>Produits</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="afficherSection('ventes')">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            <span>Ventes</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="afficherSection('stocks')">
+                            <i class="fa-solid fa-cubes"></i>
+                            <span>Stocks</span>
+                            <span class="badge-menu">3</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="afficherSection('credits')">
+                            <i class="fa-solid fa-credit-card"></i>
+                            <span>Crédits</span>
+                            <span class="badge-menu">8</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="afficherSection('inventaires')">
+                            <i class="fa-solid fa-clipboard-list"></i>
+                            <span>Inventaires</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="afficherSection('rapports')">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <span>Rapports</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="afficherSection('alertes')">
+                            <i class="fa-solid fa-bell"></i>
+                            <span>Alertes</span>
+                            <span class="badge-menu">5</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <!-- Déconnexion -->
+            <div class="deconnexion">
+                <a href="#" onclick="deconnecter()">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Déconnexion</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Zone principale du dashboard -->
+        <main class="zone-dashboard">
+            
+            <!-- ============================================ -->
+            <!-- SECTION DASHBOARD (existant - amélioré) -->
+            <!-- ============================================ -->
+            <div id="section-dashboard" class="section-page active">
+                <!-- En-tête du dashboard -->
+                <div class="entete-dashboard">
+                    <h2>Tableau de bord</h2>
+                    <div class="fil-ariane">
+                        <i class="fa-solid fa-house"></i> Accueil
+                        <i class="fa-solid fa-chevron-right"></i> Dashboard
+                    </div>
+                </div>
+
+                <!-- Barre d'actions rapides -->
+                <div class="barre-actions">
+                    <div class="zone-recherche">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Rechercher un produit par nom ou code-barre...">
+                    </div>
+                    <div class="actions-rapides">
+                        <button class="btn-action primaire" onclick="afficherSection('ventes')">
+                            <i class="fa-solid fa-plus"></i> Nouvelle Vente
+                        </button>
+                        <button class="btn-action secondaire" onclick="activerScanner()">
+                            <i class="fa-solid fa-barcode"></i> Scanner
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Section des cartes statistiques -->
+                <section class="section-statistiques">
+                    <div class="carte-stat ventes">
+                        <div class="entete-carte">
+                            <div class="info-stat">
+                                <h3>Ventes du jour</h3>
+                                <p>125 000 FCFA</p>
+                                <div class="variation positive">
+                                    <i class="fa-solid fa-arrow-up"></i>
+                                    <span>+12% vs hier</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chart-line icone-stat"></i>
+                        </div>
+                    </div>
+
+                    <div class="carte-stat produits">
+                        <div class="entete-carte">
+                            <div class="info-stat">
+                                <h3>Produits vendus</h3>
+                                <p>48</p>
+                                <div class="variation positive">
+                                    <i class="fa-solid fa-arrow-up"></i>
+                                    <span>+8 vs hier</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-box-open icone-stat"></i>
+                        </div>
+                    </div>
+
+                    <div class="carte-stat stock">
+                        <div class="entete-carte">
+                            <div class="info-stat">
+                                <h3>Valeur du stock</h3>
+                                <p>842 000 FCFA</p>
+                                <div class="variation negative">
+                                    <i class="fa-solid fa-arrow-down"></i>
+                                    <span>342 produits</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-cubes icone-stat"></i>
+                        </div>
+                    </div>
+
+                    <div class="carte-stat credits">
+                        <div class="entete-carte">
+                            <div class="info-stat">
+                                <h3>Crédits en cours</h3>
+                                <p>75 000 FCFA</p>
+                                <div class="variation negative">
+                                    <i class="fa-solid fa-exclamation-triangle"></i>
+                                    <span>8 crédits actifs</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-credit-card icone-stat"></i>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section des alertes critiques -->
+                <section class="section-alertes">
+                    <div class="alerte critique">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <div class="contenu-alerte">
+                            <h4>Stock critique</h4>
+                            <p>3 produits sont en quantité critique (< seuil d'alerte)</p>
+                        </div>
+                        <button class="btn-alerte" onclick="afficherSection('stocks')">Voir détails</button>
+                    </div>
+                    <div class="alerte avertissement">
+                        <i class="fa-solid fa-clock"></i>
+                        <div class="contenu-alerte">
+                            <h4>Crédits impayés</h4>
+                            <p>8 crédits non remboursés depuis plus de 7 jours - Total: 47 500 FCFA</p>
+                        </div>
+                        <button class="btn-alerte" onclick="afficherSection('credits')">Relancer</button>
+                    </div>
+                </section>
+
+                <!-- Section contenu principal -->
+                <section class="section-contenu">
+                    <!-- Tableau des ventes récentes -->
+                    <div class="carte-contenu section-pleine">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-clock-rotate-left"></i> Ventes récentes</h2>
+                            <a href="#" class="btn-voir-plus" onclick="afficherSection('ventes')">Voir toutes les ventes <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
+                        <table class="tableau-recentes">
+                            <thead>
+                                <tr>
+                                    <th>ID Vente</th>
+                                    <th>Produit(s)</th>
+                                    <th>Client</th>
+                                    <th>Montant</th>
+                                    <th>Type</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>#V-001</strong></td>
+                                    <td>Riz 25kg, Huile 5L</td>
+                                    <td>Jean Kouassi</td>
+                                    <td><strong>23 500 FCFA</strong></td>
+                                    <td><span class="badge paye">Comptant</span></td>
+                                    <td>14/12/2025 14:35</td>
+                                    <td><i class="fa-solid fa-eye eye-icon" onclick="voirDetailVente('V-001')"></i></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>#V-002</strong></td>
+                                    <td>Coca-Cola 50cl x3</td>
+                                    <td>Marie Bamba</td>
+                                    <td><strong>1 500 FCFA</strong></td>
+                                    <td><span class="badge paye">Comptant</span></td>
+                                    <td>14/12/2025 13:20</td>
+                                    <td><i class="fa-solid fa-eye eye-icon" onclick="voirDetailVente('V-002')"></i></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>#V-003</strong></td>
+                                    <td>Pain, Lait en poudre</td>
+                                    <td>Koné Abou (Étudiant)</td>
+                                    <td><strong>4 500 FCFA</strong></td>
+                                    <td><span class="badge credit">Crédit</span></td>
+                                    <td>14/12/2025 12:45</td>
+                                    <td><i class="fa-solid fa-eye eye-icon" onclick="voirDetailVente('V-003')"></i></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>#V-004</strong></td>
+                                    <td>Jus Youki x2, Biscuits</td>
+                                    <td>Fofana Ali</td>
+                                    <td><strong>2 800 FCFA</strong></td>
+                                    <td><span class="badge paye">Comptant</span></td>
+                                    <td>14/12/2025 11:15</td>
+                                    <td><i class="fa-solid fa-eye eye-icon" onclick="voirDetailVente('V-004')"></i></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>#V-005</strong></td>
+                                    <td>Sucre 1kg x2, Café</td>
+                                    <td>Personnel UIYA</td>
+                                    <td><strong>6 200 FCFA</strong></td>
+                                    <td><span class="badge credit">Crédit</span></td>
+                                    <td>14/12/2025 10:30</td>
+                                    <td><i class="fa-solid fa-eye eye-icon" onclick="voirDetailVente('V-005')"></i></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Produits en stock critique -->
+                    <div class="carte-contenu">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-triangle-exclamation"></i> Stock Critique</h2>
+                            <a href="#" class="btn-voir-plus" onclick="afficherSection('stocks')">Voir tout <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
+                        <ul class="liste-produits-stock">
+                            <li>
+                                <span class="nom-produit">Coca-Cola 50cl</span>
+                                <span class="quantite">5 restants</span>
+                            </li>
+                            <li>
+                                <span class="nom-produit">Pain</span>
+                                <span class="quantite">8 restants</span>
+                            </li>
+                            <li>
+                                <span class="nom-produit">Lait Nido</span>
+                                <span class="quantite">3 restants</span>
+                            </li>
+                        </ul>
+                        <button class="btn-action primaire btn-fullwidth" onclick="afficherSection('stocks')">
+                            <i class="fa-solid fa-truck"></i> Commander
+                        </button>
+                    </div>
+
+                    <!-- Activités récentes -->
+                    <div class="carte-contenu">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-history"></i> Activités récentes</h2>
+                        </div>
+                        <ul class="liste-activites">
+                            <li>
+                                <strong>Nouvelle vente enregistrée (#V-001)</strong>
+                                <span class="heure">
+                                    <i class="fa-regular fa-clock"></i> Il y a 5 minutes
+                                </span>
+                            </li>
+                            <li>
+                                <strong>Crédit remboursé par Yao Marc</strong>
+                                <span class="heure">
+                                    <i class="fa-regular fa-clock"></i> Il y a 45 minutes
+                                </span>
+                            </li>
+                            <li>
+                                <strong>Stock mis à jour - Riz 25kg</strong>
+                                <span class="heure">
+                                    <i class="fa-regular fa-clock"></i> Il y a 2 heures
+                                </span>
+                            </li>
+                            <li>
+                                <strong>Nouveau produit ajouté</strong>
+                                <span class="heure">
+                                    <i class="fa-regular fa-clock"></i> Il y a 3 heures
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Section statistiques additionnelles -->
+                <section class="section-contenu">
+                    <div class="carte-contenu">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-chart-bar"></i> Évolution des ventes (7 derniers jours)</h2>
+                            <a href="#" class="btn-voir-plus" onclick="afficherSection('rapports')">Rapport complet <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
+                        <div class="zone-graphique">
+                            <canvas id="chartVentes7Jours" aria-label="Graphique des ventes sur 7 jours"></canvas>
+                            <noscript>JavaScript est nécessaire pour afficher le graphique.</noscript>
+                        </div>
+                    </div>
+
+                    <!-- Top 5 produits les plus vendus -->
+                    <div class="carte-contenu">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-fire"></i> Top Produits (Aujourd'hui)</h2>
+                        </div>
+                        <ul class="liste-activites">
+                            <li>
+                                <strong>1. Coca-Cola 50cl</strong>
+                                <span class="heure">
+                                    <i class="fa-solid fa-box"></i> 24 unités vendues
+                                </span>
+                            </li>
+                            <li>
+                                <strong>2. Pain</strong>
+                                <span class="heure">
+                                    <i class="fa-solid fa-box"></i> 18 unités vendues
+                                </span>
+                            </li>
+                            <li>
+                                <strong>3. Eau minérale 50cl</strong>
+                                <span class="heure">
+                                    <i class="fa-solid fa-box"></i> 15 unités vendues
+                                </span>
+                            </li>
+                            <li>
+                                <strong>4. Jus Youki</strong>
+                                <span class="heure">
+                                    <i class="fa-solid fa-box"></i> 12 unités vendues
+                                </span>
+                            </li>
+                            <li>
+                                <strong>5. Biscuits</strong>
+                                <span class="heure">
+                                    <i class="fa-solid fa-box"></i> 10 unités vendues
+                                </span>
+                            </li>
+                        </ul>
+                    </div>                
+                </section>
+
+                <!-- Section résumé du jour -->
+                <section class="section-contenu">
+                    <div class="carte-contenu">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-calendar-day"></i> Résumé du jour</h2>
+                        </div>
+                        <div class="resume-jour">
+                            <div class="card">
+                                <div class="row">
+                                    <span class="label">Recettes totales</span>
+                                    <strong class="value green">125 000 FCFA</strong>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="row">
+                                    <span class="label">Ventes comptant</span>
+                                    <strong class="value blue">98 500 FCFA</strong>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="row">
+                                    <span class="label">Crédits accordés</span>
+                                    <strong class="value orange">26 500 FCFA</strong>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="row">
+                                    <span class="label">Remboursements reçus</span>
+                                    <strong class="value green">12 000 FCFA</strong>
+                                </div>
+                            </div>
+                            <button class="btn-action secondaire btn-fullwidth" onclick="telechargerRapportJournalier()">
+                                <i class="fa-solid fa-file-pdf"></i> Télécharger rapport journalier
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- SECTION PRODUITS (existant) -->
+            <!-- ============================================ -->
+            <div id="section-produits" class="section-page">
+                <div class="entete-dashboard">
+                    <h2>Gestion des Produits</h2>
+                    <div class="fil-ariane">
+                        <i class="fa-solid fa-house"></i> Accueil
+                        <i class="fa-solid fa-chevron-right"></i> Produits
+                    </div>
+                </div>
+
+                <!-- Barre d'actions -->
+                <div class="barre-actions-produits">
+                    <div class="zone-recherche-produits">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="champRecherche" placeholder="Rechercher par nom, code-barre ou catégorie...">
+                    </div>
+                    <div class="groupe-boutons-actions">
+                        <button class="btn-action btn-primaire" onclick="ouvrirModalProduit()">
+                            <i class="fa-solid fa-plus"></i> Ajouter Produit
+                        </button>
+                        <button class="btn-action btn-secondaire">
+                            <i class="fa-solid fa-file-excel"></i> Exporter
+                        </button>
+                        <button class="btn-action btn-tertiaire">
+                            <i class="fa-solid fa-barcode"></i> Scanner
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filtres et conteneur -->
+                <div class="zone-filtres-stats">
+                    <!-- Panneau de filtres -->
+                    <aside class="panneau-filtres">
+                        <h3><i class="fa-solid fa-filter"></i> Filtres</h3>
+                        <div class="groupe-filtre">
+                            <label>Catégorie</label>
+                            <select id="filtreCategorie" onchange="filtrerProduits()">
+                                <option value="">Toutes les catégories</option>
+                                <option value="boissons">Boissons</option>
+                                <option value="snacks">Snacks</option>
+                                <option value="alimentaire">Alimentaire</option>
+                                <option value="hygiene">Hygiène</option>
+                                <option value="autre">Autre</option>
+                            </select>
+                        </div>
+
+                        <div class="groupe-filtre">
+                            <label>État du stock</label>
+                            <select id="filtreStock" onchange="filtrerProduits()">
+                                <option value="">Tous les stocks</option>
+                                <option value="bon">Stock suffisant</option>
+                                <option value="moyen">Stock moyen</option>
+                                <option value="critique">Stock critique</option>
+                            </select>
+                        </div>
+
+                        <div class="groupe-filtre">
+                            <label>Trier par</label>
+                            <select id="triProduits" onchange="trierProduits()">
+                                <option value="nom">Nom (A-Z)</option>
+                                <option value="nom-desc">Nom (Z-A)</option>
+                                <option value="prix">Prix croissant</option>
+                                <option value="prix-desc">Prix décroissant</option>
+                                <option value="stock">Stock croissant</option>
+                                <option value="stock-desc">Stock décroissant</option>
+                            </select>
+                        </div>
+
+                        <div class="stats-rapides">
+                            <div class="stat-item">
+                                <span>Total produits</span>
+                                <strong id="totalProduits">24</strong>
+                            </div>
+                            <div class="stat-item">
+                                <span>Stock critique</span>
+                                <strong id="stockCritique">3</strong>
+                            </div>
+                            <div class="stat-item">
+                                <span>Valeur totale</span>
+                                <strong id="valeurTotale">842 000 FCFA</strong>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <!-- Conteneur des produits -->
+                    <div class="conteneur-produits">
+                        <div class="entete-tableau">
+                            <h3><i class="fa-solid fa-box-open"></i> Liste des Produits</h3>
+                            <span class="info-total">Affichage de <strong>1-10</strong> sur <strong>24</strong> produits</span>
+                        </div>
+
+                        <table class="tableau-produits">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Catégorie</th>
+                                    <th>Prix Unitaire</th>
+                                    <th>Stock</th>
+                                    <th>Seuil Alerte</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="corpTableauProduits">
+                                <tr>
+                                    <td>
+                                        <div class="info-produit">
+                                            <div class="icone-produit">
+                                                <i class="fa-solid fa-bottle-water"></i>
+                                            </div>
+                                            <div class="details-produit">
+                                                <h4>Coca-Cola 50cl</h4>
+                                                <span class="code-barre">5449000000996</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge-categorie badge-boissons">Boissons</span></td>
+                                    <td><span class="prix-produit">500 FCFA</span></td>
+                                    <td>
+                                        <div class="stock-produit">
+                                            <span class="badge-stock stock-critique">5 unités</span>
+                                        </div>
+                                    </td>
+                                    <td>10</td>
+                                    <td>
+                                        <div class="actions-produit">
+                                            <button class="btn-icone btn-voir" title="Voir détails">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </button>
+                                            <button class="btn-icone btn-modifier" title="Modifier" onclick="ouvrirModalProduit('modifier')">
+                                                <i class="fa-solid fa-pen"></i>
+                                            </button>
+                                            <button class="btn-icone btn-supprimer" title="Supprimer" onclick="confirmerSuppression()">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- Autres produits... -->
+                            </tbody>
+                        </table>
+
+                        <!-- Pagination -->
+                        <div class="pagination">
+                            <button class="btn-page" disabled>
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+                            <button class="btn-page actif">1</button>
+                            <button class="btn-page">2</button>
+                            <button class="btn-page">3</button>
+                            <button class="btn-page">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- SECTION VENTES (existant) -->
+            <!-- ============================================ -->
+            <div id="section-ventes" class="section-page">
+                <div class="entete-section-vente">
+                    <h2><i class="fa-solid fa-cart-shopping"></i> Nouvelle vente</h2>
+                </div>
+                <div class="zone-vente">
+                    <!-- panneau principal -->
+                    <div class="panneau-principal-vente">
+                        <h3>
+                            <i class="fa-solid fa-magnifying-glass"></i> Articles dans le panier
+                        </h3>
+                        <div class="zone-recherche-vente">
+                            <div class="input-recherche">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="rechercheVente" placeholder="Rechercher un article par nom ou code-barre..." autocomplete="off">
+                            </div>
+                            <button class="btn-scanner" onclick="activerScanner()">
+                                <i class="fa-solid fa-barcode"></i> Scanner
+                            </button>
+                        </div>
+                        <div class="selection-rapid">
+                            <h4><i class="fa-solid fa-fire"></i> Produits populaires</h4>
+                            <div class="grille-produits-rapides" id="produitsRapides">
+                                <!-- produits chargés dynamiquement -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- panneau panier -->
+                    <div class="panneau-panier">
+                        <h3>
+                            <i class="fa-solid fa-shopping-cart"></i> Panier (<span id="nombreArticlesPanier">0</span>)
+                        </h3>
+                        <div class="list-panier" id="listePanier">
+                            <div class="panier-vide">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                                <p>Aucun produit dans le panier</p>
+                            </div>
+                        </div>
+                        <div class="resume-vente">
+                            <div class="ligne-resume">
+                                <span class="label">Sous total</span>
+                                <span class="valeur" id="total">0 FCFA</span>
+                            </div>
+                        </div>
+                        <div class="type-paiement">
+                            <h4>Type de paiement</h4>
+                            <div class="option-paiement">
+                                <div class="option-paiement comptant actif" onclick="selectionnerPaiement('comptant')">
+                                    <i class="fa-solid fa-money-bill-wave"></i>
+                                    <div class="label-paiement">Comptant</div>
+                                </div>
+                                <div class="option-paiement credit" onclick="selectionnerPaiement('credit')">
+                                    <i class="fa-solid fa-credit-card"></i>
+                                    <div class="label-paiement">À crédit</div>
+                                </div>
+                            </div>
+                            <div class="champ-client" id="champClient">
+                                <label>Nom du client *</label>
+                                <input type="text" id="nomClient" placeholder="Entrez le nom du client">
+                            </div>
+                        </div>
+                        <div class="zone-montant-recu visible" id="zoneMontantRecu">
+                            <label>Montant reçu</label>
+                            <input type="number" id="montantRecu" placeholder="0" min="0">
+                            <div class="rendu-monnaie" id="renduMonnaie">
+                                <div class="label">Rendu de monnaie</div>
+                                <div class="montant" id="montantRendu">0 FCFA</div>
+                            </div>
+                        </div>
+                        <div class="actions-vente">
+                            <button class="btn-action-vente btn-annuler" onclick="annulerVente()">
+                                <i class="fa-solid fa-times"></i>
+                                Annuler
+                            </button>
+                            <button class="btn-action-vente btn-valider" id="btnValider" onclick="validerVente()" disabled>
+                                <i class="fa-solid fa-check"></i>
+                                Valider
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- NOUVELLE SECTION STOCKS -->
+            <!-- ============================================ -->
+            <div id="section-stocks" class="section-page">
+                <div class="entete-dashboard">
+                    <h2>Gestion des Stocks</h2>
+                    <div class="fil-ariane">
+                        <i class="fa-solid fa-house"></i> Accueil
+                        <i class="fa-solid fa-chevron-right"></i> Stocks
+                    </div>
+                </div>
+
+                <!-- Barre d'actions -->
+                <div class="barre-actions">
+                    <div class="zone-recherche">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="rechercheStock" placeholder="Rechercher un produit...">
+                    </div>
+                    <div class="actions-rapides">
+                        <button class="btn-action primaire" onclick="ouvrirModalMouvementStock('entree')">
+                            <i class="fa-solid fa-arrow-up"></i> Entrée de Stock
+                        </button>
+                        <button class="btn-action secondaire" onclick="ouvrirModalMouvementStock('sortie')">
+                            <i class="fa-solid fa-arrow-down"></i> Sortie de Stock
+                        </button>
+                        <button class="btn-action tertiaire" onclick="ouvrirModalPerte()">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Déclarer Perte
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Statistiques Stock -->
+                <section class="section-statistiques">
+                    <div class="carte-stat">
+                        <div class="entete-carte">
+                            <div class="info-stat">
+                                <h3>Valeur totale du stock</h3>
+                                <p>842 000 FCFA</p>
+                                <div class="variation info">
+                                    <i class="fa-solid fa-cubes"></i>
+                                    <span>342 produits</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-warehouse icone-stat"></i>
+                        </div>
+                    </div>
+
+                    <div class="carte-stat">
+                        <div class="entete-carte">
+                            <div class="info-stat">
+                                <h3>Entrées du mois</h3>
+                                <p>245 unités</p>
+                                <div class="variation positive">
+                                    <i class="fa-solid fa-arrow-up"></i>
+                                    <span>+15% vs mois dernier</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-arrow-trend-up icone-stat"></i>
+                        </div>
+                    </div>
+
+                    <div class="carte-stat">
+                        <div class="entete-carte">
+                            <div class="info-stat">
+                                <h3>Sorties du mois</h3>
+                                <p>189 unités</p>
+                                <div class="variation info">
+                                    <i class="fa-solid fa-arrow-trend-down"></i>
+                                    <span>Ventes + Pertes</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-arrow-down icone-stat"></i>
+                        </div>
+                    </div>
+
+                    <div class="carte-stat">
+                        <div class="entete-carte">
+                            <div class="info-stat">
+                                <h3>Produits critiques</h3>
+                                <p>3</p>
+                                <div class="variation negative">
+                                    <i class="fa-solid fa-exclamation-triangle"></i>
+                                    <span>Seuil d'alerte atteint</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-bell icone-stat"></i>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tableau des stocks -->
+                <section class="section-contenu">
+                    <div class="carte-contenu section-pleine">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-cubes"></i> État des Stocks</h2>
+                            <div class="actions-header">
+                                <select id="filtreEtatStock" onchange="filtrerParEtatStock()">
+                                    <option value="">Tous les états</option>
+                                    <option value="bon">Stock suffisant</option>
+                                    <option value="moyen">Stock moyen</option>
+                                    <option value="critique">Stock critique</option>
+                                    <option value="rupture">Rupture</option>
+                                </select>
+                                <button class="btn-voir-plus" onclick="exporterStock()">
+                                    <i class="fa-solid fa-file-excel"></i> Exporter
+                                </button>
+                            </div>
+                        </div>
+                        <table class="tableau-stock">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Catégorie</th>
+                                    <th>Qté en Stock</th>
+                                    <th>Seuil Alerte</th>
+                                    <th>Valeur</th>
+                                    <th>État</th>
+                                    <th>Dernière Entrée</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableauStockBody">
+                                <!-- Rempli dynamiquement par JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Mouvements récents -->
+                    <div class="carte-contenu">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-exchange-alt"></i> Mouvements Récents</h2>
+                            <a href="#" class="btn-voir-plus">Voir tous <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
+                        <div class="liste-mouvements" id="listeMouvements">
+                            <!-- Mouvements chargés dynamiquement -->
+                        </div>
+                    </div>
+
+                    <!-- Alertes Stock -->
+                    <div class="carte-contenu">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-bell"></i> Alertes Stock</h2>
+                        </div>
+                        <div class="liste-alertes-stock" id="listeAlertesStock">
+                            <!-- Alertes chargées dynamiquement -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- NOUVELLE SECTION CRÉDITS -->
+            <!-- ============================================ -->
+            <div id="section-credits" class="section-page">
+                <div class="entete-dashboard">
+                    <h2>Gestion des Crédits</h2>
+                    <div class="fil-ariane">
+                        <i class="fa-solid fa-house"></i> Accueil
+                        <i class="fa-solid fa-chevron-right"></i> Crédits
+                    </div>
+                </div>
+
+                <!-- Barre d'actions -->
+                <div class="barre-actions">
+                    <div class="zone-recherche">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="rechercheCredit" placeholder="Rechercher par nom client...">
+                    </div>
+                    <div class="actions-rapides">
+                        <button class="btn-action primaire" onclick="ouvrirModalRemboursement()">
+                            <i class="fa-solid fa-money-bill"></i> Enregistrer Remboursement
+                        </button>
+                        <button class="btn-action secondaire" onclick="exporterCredits()">
+                            <i class="fa-solid fa-file-excel"></i> Exporter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Statistiques Crédits -->
+                <section class="section-statistiques">
+                    <div class="carte-stat">
+                        <div class="entete-carte">
+                            <div class="info-stat">
+                                <h3>Total Crédits en cours</h3>
+                                <p>75 000 FCFA</p>
+                                <div class="variation negative">
+                                    <i class="fa-solid fa-exclamation-triangle"></i>
+                                    <span>8 crédits actifs</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-credit-card icone-stat"></i>
+                        </div>
+                    </div>
+
+                    <div class="carte-stat">
+                        <div class="entete-carte">
+                            <div class="info-stat">
+                                <h3>Crédits impayés</h3>
+                                <p>47 500 FCFA</p>
+                                <div class="variation negative">
+                                    <i class="fa-solid fa-clock"></i>
+                                    <span>Plus de 7 jours</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-clock icone-stat"></i>
+                        </div>
+                    </div>
+
+                    <div class="carte-stat">
+                        <div class="entete-carte">
+                            <div class="info-stat">
+                                <h3>Remboursements du mois</h3>
+                                <p>125 000 FCFA</p>
+                                <div class="variation positive">
+                                    <i class="fa-solid fa-arrow-up"></i>
+                                    <span>+20% vs mois dernier</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-money-bill-trend-up icone-stat"></i>
+                        </div>
+                    </div>
+
+                    <div class="carte-stat">
+                        <div class="entete-carte">
+                            <div class="info-stat">
+                                <h3>Taux de recouvrement</h3>
+                                <p>85%</p>
+                                <div class="variation positive">
+                                    <i class="fa-solid fa-chart-line"></i>
+                                    <span>Bon taux</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-percent icone-stat"></i>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tableau des crédits -->
+                <section class="section-contenu">
+                    <div class="carte-contenu section-pleine">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-list"></i> Liste des Crédits</h2>
+                            <div class="actions-header">
+                                <select id="filtreEtatCredit" onchange="filtrerParEtatCredit()">
+                                    <option value="">Tous les crédits</option>
+                                    <option value="en-cours">En cours</option>
+                                    <option value="en-retard">En retard</option>
+                                    <option value="rembourse">Remboursés</option>
+                                </select>
+                            </div>
+                        </div>
+                        <table class="tableau-credits">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Client</th>
+                                    <th>Montant Initial</th>
+                                    <th>Montant Restant</th>
+                                    <th>Date Crédit</th>
+                                    <th>Jours Écoulés</th>
+                                    <th>État</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableauCreditsBody">
+                                <tr>
+                                    <td><strong>#C-001</strong></td>
+                                    <td>Koné Abou</td>
+                                    <td>15 000 FCFA</td>
+                                    <td><strong>12 000 FCFA</strong></td>
+                                    <td>05/12/2025</td>
+                                    <td>9 jours</td>
+                                    <td><span class="badge-etat etat-retard">En retard</span></td>
+                                    <td>
+                                        <div class="actions-credit">
+                                            <button class="btn-icone btn-voir" title="Voir détails" onclick="voirDetailCredit('C-001')">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </button>
+                                            <button class="btn-icone btn-modifier" title="Rembourser" onclick="ouvrirModalRemboursement('C-001')">
+                                                <i class="fa-solid fa-money-bill"></i>
+                                            </button>
+                                            <button class="btn-icone btn-message" title="Relancer" onclick="relancerClient('C-001')">
+                                                <i class="fa-solid fa-envelope"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>#C-002</strong></td>
+                                    <td>Personnel UIYA</td>
+                                    <td>6 200 FCFA</td>
+                                    <td><strong>6 200 FCFA</strong></td>
+                                    <td>14/12/2025</td>
+                                    <td>0 jour</td>
+                                    <td><span class="badge-etat etat-en-cours">En cours</span></td>
+                                    <td>
+                                        <div class="actions-credit">
+                                            <button class="btn-icone btn-voir" title="Voir détails" onclick="voirDetailCredit('C-002')">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </button>
+                                            <button class="btn-icone btn-modifier" title="Rembourser" onclick="ouvrirModalRemboursement('C-002')">
+                                                <i class="fa-solid fa-money-bill"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- Autres crédits... -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Historique des remboursements -->
+                    <div class="carte-contenu">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-history"></i> Remboursements Récents</h2>
+                            <a href="#" class="btn-voir-plus">Voir tous <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
+                        <div class="liste-remboursements" id="listeRemboursements">
+                            <div class="remboursement-item">
+                                <div class="remboursement-info">
+                                    <strong>Yao Marc</strong>
+                                    <span class="remboursement-details">Remboursement partiel: 5 000 FCFA</span>
+                                    <span class="remboursement-date">
+                                        <i class="fa-regular fa-clock"></i> 14/12/2025 10:30
+                                    </span>
+                                </div>
+                                <span class="badge-remboursement badge-partiel">Partiel</span>
+                            </div>
+                            <div class="remboursement-item">
+                                <div class="remboursement-info">
+                                    <strong>Sophie Koffi</strong>
+                                    <span class="remboursement-details">Remboursement total: 8 500 FCFA</span>
+                                    <span class="remboursement-date">
+                                        <i class="fa-regular fa-clock"></i> 13/12/2025 15:45
+                                    </span>
+                                </div>
+                                <span class="badge-remboursement badge-total">Total</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Clients avec crédits -->
+                    <div class="carte-contenu">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-users"></i> Top Clients à Crédit</h2>
+                        </div>
+                        <ul class="liste-clients-credit">
+                            <li>
+                                <div class="client-info">
+                                    <strong>Koné Abou</strong>
+                                    <span>3 crédits actifs</span>
+                                </div>
+                                <span class="montant-client">27 000 FCFA</span>
+                            </li>
+                            <li>
+                                <div class="client-info">
+                                    <strong>Personnel UIYA</strong>
+                                    <span>2 crédits actifs</span>
+                                </div>
+                                <span class="montant-client">18 500 FCFA</span>
+                            </li>
+                            <li>
+                                <div class="client-info">
+                                    <strong>Étudiants Divers</strong>
+                                    <span>3 crédits actifs</span>
+                                </div>
+                                <span class="montant-client">29 500 FCFA</span>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- NOUVELLE SECTION INVENTAIRES -->
+            <!-- ============================================ -->
+            <div id="section-inventaires" class="section-page">
+                <div class="entete-dashboard">
+                    <h2>Gestion des Inventaires</h2>
+                    <div class="fil-ariane">
+                        <i class="fa-solid fa-house"></i> Accueil
+                        <i class="fa-solid fa-chevron-right"></i> Inventaires
+                    </div>
+                </div>
+
+                <!-- Barre d'actions -->
+                <div class="barre-actions">
+                    <div class="zone-recherche">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Rechercher un inventaire...">
+                    </div>
+                    <div class="actions-rapides">
+                        <button class="btn-action primaire" onclick="creerNouvelInventaire()">
+                            <i class="fa-solid fa-plus"></i> Nouvel Inventaire
+                        </button>
+                        <button class="btn-action secondaire" onclick="exporterInventaire()">
+                            <i class="fa-solid fa-file-excel"></i> Exporter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Info inventaire en cours -->
+                <section class="section-alertes">
+                    <div class="alerte info">
+                        <i class="fa-solid fa-info-circle"></i>
+                        <div class="contenu-alerte">
+                            <h4>Inventaire recommandé</h4>
+                            <p>Dernier inventaire effectué il y a 25 jours. Il est recommandé de faire un inventaire tous les 30 jours.</p>
+                        </div>
+                        <button class="btn-alerte" onclick="creerNouvelInventaire()">Démarrer</button>
+                    </div>
+                </section>
+
+                <!-- Liste des inventaires -->
+                <section class="section-contenu">
+                    <div class="carte-contenu section-pleine">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-clipboard-list"></i> Historique des Inventaires</h2>
+                        </div>
+                        <table class="tableau-inventaires">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Date</th>
+                                    <th>Responsable</th>
+                                    <th>Nb Produits</th>
+                                    <th>Écarts Trouvés</th>
+                                    <th>Valeur Totale</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>#INV-003</strong></td>
+                                    <td>20/11/2025</td>
+                                    <td>Mr IB</td>
+                                    <td>24 produits</td>
+                                    <td>2 écarts</td>
+                                    <td>842 000 FCFA</td>
+                                    <td><span class="badge-etat etat-termine">Terminé</span></td>
+                                    <td>
+                                        <div class="actions-inventaire">
+                                            <button class="btn-icone btn-voir" title="Voir détails" onclick="voirDetailInventaire('INV-003')">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </button>
+                                            <button class="btn-icone btn-telecharger" title="Télécharger" onclick="telechargerInventaire('INV-003')">
+                                                <i class="fa-solid fa-download"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>#INV-002</strong></td>
+                                    <td>20/10/2025</td>
+                                    <td>Mr IB</td>
+                                    <td>22 produits</td>
+                                    <td>1 écart</td>
+                                    <td>798 000 FCFA</td>
+                                    <td><span class="badge-etat etat-termine">Terminé</span></td>
+                                    <td>
+                                        <div class="actions-inventaire">
+                                            <button class="btn-icone btn-voir" title="Voir détails" onclick="voirDetailInventaire('INV-002')">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </button>
+                                            <button class="btn-icone btn-telecharger" title="Télécharger" onclick="telechargerInventaire('INV-002')">
+                                                <i class="fa-solid fa-download"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Instructions inventaire -->
+                    <div class="carte-contenu">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-lightbulb"></i> Guide Inventaire</h2>
+                        </div>
+                        <div class="guide-inventaire">
+                            <div class="etape-guide">
+                                <div class="numero-etape">1</div>
+                                <div class="contenu-etape">
+                                    <h4>Préparer l'inventaire</h4>
+                                    <p>Créer une nouvelle session d'inventaire dans le système</p>
+                                </div>
+                            </div>
+                            <div class="etape-guide">
+                                <div class="numero-etape">2</div>
+                                <div class="contenu-etape">
+                                    <h4>Compter les produits</h4>
+                                    <p>Scanner ou saisir manuellement les quantités réelles en stock</p>
+                                </div>
+                            </div>
+                            <div class="etape-guide">
+                                <div class="numero-etape">3</div>
+                                <div class="contenu-etape">
+                                    <h4>Vérifier les écarts</h4>
+                                    <p>Le système affiche automatiquement les différences</p>
+                                </div>
+                            </div>
+                            <div class="etape-guide">
+                                <div class="numero-etape">4</div>
+                                <div class="contenu-etape">
+                                    <h4>Ajuster le stock</h4>
+                                    <p>Valider les ajustements pour mettre à jour le stock</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- NOUVELLE SECTION RAPPORTS -->
+            <!-- ============================================ -->
+            <div id="section-rapports" class="section-page">
+                <div class="entete-dashboard">
+                    <h2>Rapports et Statistiques</h2>
+                    <div class="fil-ariane">
+                        <i class="fa-solid fa-house"></i> Accueil
+                        <i class="fa-solid fa-chevron-right"></i> Rapports
+                    </div>
+                </div>
+
+                <!-- Filtres de période -->
+                <div class="barre-actions">
+                    <div class="filtres-periode">
+                        <select id="periodeRapport" onchange="changerPeriodeRapport()">
+                            <option value="jour">Aujourd'hui</option>
+                            <option value="semaine">Cette semaine</option>
+                            <option value="mois" selected>Ce mois</option>
+                            <option value="annee">Cette année</option>
+                            <option value="personnalise">Période personnalisée</option>
+                        </select>
+                        <div class="periode-personnalisee" id="periodePersonnalisee" style="display: none;">
+                            <input type="date" id="dateDebut">
+                            <span>à</span>
+                            <input type="date" id="dateFin">
+                            <button class="btn-action primaire" onclick="appliquerPeriode()">Appliquer</button>
+                        </div>
+                    </div>
+                    <div class="actions-rapides">
+                        <button class="btn-action primaire" onclick="genererRapportComplet()">
+                            <i class="fa-solid fa-file-pdf"></i> Rapport Complet PDF
+                        </button>
+                        <button class="btn-action secondaire" onclick="exporterDonnees()">
+                            <i class="fa-solid fa-file-excel"></i> Exporter Excel
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Rapports rapides -->
+                <section class="section-contenu">
+                    <div class="carte-contenu">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-file-lines"></i> Rapports Prédéfinis</h2>
+                        </div>
+                        <div class="liste-rapports-rapides">
+                            <button class="btn-rapport" onclick="telechargerRapport('journalier')">
+                                <i class="fa-solid fa-calendar-day"></i>
+                                <span>Rapport Journalier</span>
+                            </button>
+                            <button class="btn-rapport" onclick="telechargerRapport('hebdomadaire')">
+                                <i class="fa-solid fa-calendar-week"></i>
+                                <span>Rapport Hebdomadaire</span>
+                            </button>
+                            <button class="btn-rapport" onclick="telechargerRapport('mensuel')">
+                                <i class="fa-solid fa-calendar"></i>
+                                <span>Rapport Mensuel</span>
+                            </button>
+                            <button class="btn-rapport" onclick="telechargerRapport('stock')">
+                                <i class="fa-solid fa-cubes"></i>
+                                <span>État des Stocks</span>
+                            </button>
+                            <button class="btn-rapport" onclick="telechargerRapport('credits')">
+                                <i class="fa-solid fa-credit-card"></i>
+                                <span>Rapport Crédits</span>
+                            </button>
+                            <button class="btn-rapport" onclick="telechargerRapport('top-produits')">
+                                <i class="fa-solid fa-fire"></i>
+                                <span>Top Produits</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Graphiques -->
+                    <div class="carte-contenu section-pleine">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-chart-line"></i> Évolution du Chiffre d'Affaires</h2>
+                        </div>
+                        <div class="zone-graphique" id="graphiqueCA">
+                            <canvas id="canvasCA"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="carte-contenu">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-chart-pie"></i> Ventes par Catégorie</h2>
+                        </div>
+                        <div class="zone-graphique" id="graphiqueCategories">
+                            <canvas id="canvasCategories"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="carte-contenu">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-chart-bar"></i> Top 10 Produits</h2>
+                        </div>
+                        <div class="zone-graphique" id="graphiqueTopProduits">
+                            <canvas id="canvasTopProduits"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Statistiques détaillées -->
+                <section class="section-contenu">
+                    <div class="carte-contenu section-pleine">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-table"></i> Statistiques Détaillées</h2>
+                        </div>
+                        <div class="stats-detaillees">
+                            <div class="stat-detail">
+                                <h4>Ventes</h4>
+                                <div class="stat-valeur">350 000 FCFA</div>
+                                <div class="stat-info">156 transactions</div>
+                            </div>
+                            <div class="stat-detail">
+                                <h4>Marge Brute</h4>
+                                <div class="stat-valeur">105 000 FCFA</div>
+                                <div class="stat-info">30% de marge</div>
+                            </div>
+                            <div class="stat-detail">
+                                <h4>Ticket Moyen</h4>
+                                <div class="stat-valeur">2 244 FCFA</div>
+                                <div class="stat-info">Par transaction</div>
+                            </div>
+                            <div class="stat-detail">
+                                <h4>Produits Vendus</h4>
+                                <div class="stat-valeur">487 unités</div>
+                                <div class="stat-info">18 produits différents</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- NOUVELLE SECTION ALERTES -->
+            <!-- ============================================ -->
+            <div id="section-alertes" class="section-page">
+                <div class="entete-dashboard">
+                    <h2>Centre d'Alertes</h2>
+                    <div class="fil-ariane">
+                        <i class="fa-solid fa-house"></i> Accueil
+                        <i class="fa-solid fa-chevron-right"></i> Alertes
+                    </div>
+                </div>
+
+                <!-- Filtres alertes -->
+                <div class="barre-actions">
+                    <div class="filtres-alertes">
+                        <button class="btn-filtre actif" onclick="filtrerAlertes('toutes')">
+                            Toutes (5)
+                        </button>
+                        <button class="btn-filtre" onclick="filtrerAlertes('stock')">
+                            <i class="fa-solid fa-cubes"></i> Stock (3)
+                        </button>
+                        <button class="btn-filtre" onclick="filtrerAlertes('credits')">
+                            <i class="fa-solid fa-credit-card"></i> Crédits (2)
+                        </button>
+                        <button class="btn-filtre" onclick="filtrerAlertes('inventaire')">
+                            <i class="fa-solid fa-clipboard-list"></i> Inventaire (0)
+                        </button>
+                    </div>
+                    <div class="actions-rapides">
+                        <button class="btn-action secondaire" onclick="marquerToutesLues()">
+                            <i class="fa-solid fa-check-double"></i> Tout marquer comme lu
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Liste des alertes -->
+                <section class="section-contenu">
+                    <div class="carte-contenu section-pleine">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-bell"></i> Alertes Actives</h2>
+                        </div>
+                        <div class="liste-alertes-detaillees">
+                            <!-- Alerte critique -->
+                            <div class="alerte-detaillee critique non-lue">
+                                <div class="alerte-icon">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                </div>
+                                <div class="alerte-contenu">
+                                    <div class="alerte-header">
+                                        <h4>Stock Critique - Coca-Cola 50cl</h4>
+                                        <span class="alerte-temps">Il y a 2 heures</span>
+                                    </div>
+                                    <p>Le stock de ce produit est passé sous le seuil d'alerte (5/10 unités).</p>
+                                    <div class="alerte-actions">
+                                        <button class="btn-action-alerte primaire" onclick="approvisionner('COCA001')">
+                                            <i class="fa-solid fa-truck"></i> Approvisionner
+                                        </button>
+                                        <button class="btn-action-alerte secondaire" onclick="marquerLue(this)">
+                                            Marquer comme lu
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Alerte avertissement -->
+                            <div class="alerte-detaillee avertissement non-lue">
+                                <div class="alerte-icon">
+                                    <i class="fa-solid fa-exclamation-circle"></i>
+                                </div>
+                                <div class="alerte-contenu">
+                                    <div class="alerte-header">
+                                        <h4>Stock Moyen - Pain</h4>
+                                        <span class="alerte-temps">Il y a 5 heures</span>
+                                    </div>
+                                    <p>Le stock approche du seuil d'alerte (8/15 unités).</p>
+                                    <div class="alerte-actions">
+                                        <button class="btn-action-alerte primaire" onclick="approvisionner('PAIN001')">
+                                            <i class="fa-solid fa-truck"></i> Approvisionner
+                                        </button>
+                                        <button class="btn-action-alerte secondaire" onclick="marquerLue(this)">
+                                            Marquer comme lu
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Alerte crédit -->
+                            <div class="alerte-detaillee avertissement non-lue">
+                                <div class="alerte-icon">
+                                    <i class="fa-solid fa-clock"></i>
+                                </div>
+                                <div class="alerte-contenu">
+                                    <div class="alerte-header">
+                                        <h4>Crédit Impayé - Koné Abou</h4>
+                                        <span class="alerte-temps">Il y a 1 jour</span>
+                                    </div>
+                                    <p>Crédit de 12 000 FCFA non remboursé depuis 9 jours.</p>
+                                    <div class="alerte-actions">
+                                        <button class="btn-action-alerte primaire" onclick="relancerClient('C-001')">
+                                            <i class="fa-solid fa-envelope"></i> Relancer
+                                        </button>
+                                        <button class="btn-action-alerte secondaire" onclick="voirDetailCredit('C-001')">
+                                            Voir détails
+                                        </button>
+                                        <button class="btn-action-alerte secondaire" onclick="marquerLue(this)">
+                                            Marquer comme lu
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Alerte info -->
+                            <div class="alerte-detaillee info">
+                                <div class="alerte-icon">
+                                    <i class="fa-solid fa-info-circle"></i>
+                                </div>
+                                <div class="alerte-contenu">
+                                    <div class="alerte-header">
+                                        <h4>Inventaire Recommandé</h4>
+                                        <span class="alerte-temps">Il y a 2 jours</span>
+                                    </div>
+                                    <p>Dernier inventaire effectué il y a 25 jours. Un nouvel inventaire est recommandé.</p>
+                                    <div class="alerte-actions">
+                                        <button class="btn-action-alerte primaire" onclick="creerNouvelInventaire()">
+                                            <i class="fa-solid fa-clipboard-list"></i> Démarrer Inventaire
+                                        </button>
+                                        <button class="btn-action-alerte secondaire" onclick="marquerLue(this)">
+                                            Marquer comme lu
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Alerte critique -->
+                            <div class="alerte-detaillee critique non-lue">
+                                <div class="alerte-icon">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                </div>
+                                <div class="alerte-contenu">
+                                    <div class="alerte-header">
+                                        <h4>Stock Critique - Café Nescafé</h4>
+                                        <span class="alerte-temps">Il y a 3 heures</span>
+                                    </div>
+                                    <p>Le stock est en quantité critique (3/5 unités).</p>
+                                    <div class="alerte-actions">
+                                        <button class="btn-action-alerte primaire" onclick="approvisionner('CAFE001')">
+                                            <i class="fa-solid fa-truck"></i> Approvisionner
+                                        </button>
+                                        <button class="btn-action-alerte secondaire" onclick="marquerLue(this)">
+                                            Marquer comme lu
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Paramètres d'alertes -->
+                    <div class="carte-contenu">
+                        <div class="entete-carte">
+                            <h2><i class="fa-solid fa-cog"></i> Paramètres d'Alertes</h2>
+                        </div>
+                        <div class="parametres-alertes">
+                            <div class="parametre-item">
+                                <label>
+                                    <input type="checkbox" checked>
+                                    Alertes stock critique
+                                </label>
+                                <p class="parametre-desc">Recevoir une alerte quand un produit passe sous son seuil d'alerte</p>
+                            </div>
+                            <div class="parametre-item">
+                                <label>
+                                    <input type="checkbox" checked>
+                                    Alertes crédits impayés
+                                </label>
+                                <p class="parametre-desc">Recevoir une alerte pour les crédits non remboursés après 7 jours</p>
+                            </div>
+                            <div class="parametre-item">
+                                <label>
+                                    <input type="checkbox" checked>
+                                    Rappel inventaire
+                                </label>
+                                <p class="parametre-desc">Recevoir un rappel pour effectuer un inventaire tous les 30 jours</p>
+                            </div>
+                            <div class="parametre-item">
+                                <label>
+                                    <input type="checkbox">
+                                    Alertes produits proches péremption
+                                </label>
+                                <p class="parametre-desc">Recevoir une alerte pour les produits qui arrivent à péremption</p>
+                            </div>
+                            <button class="btn-action primaire btn-fullwidth">
+                                <i class="fa-solid fa-save"></i> Enregistrer les Paramètres
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODALS GLOBAUX -->
+    <!-- ============================================ -->
+
+    <!-- Modal Ajout/Modification Produit -->
+    <div class="modal-overlay" id="modalProduit">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 id="titreProduit">
+                    <i class="fa-solid fa-box-open"></i> Ajouter un Produit
+                </h2>
+                <button class="btn-fermer-modal" onclick="fermerModalProduit()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formProduit">
+                    <div class="form-group">
+                        <label>Nom du produit *</label>
+                        <input type="text" id="nomProduit" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Code-barre *</label>
+                        <input type="text" id="codeBarreProduit" required>
+                        <button type="button" class="btn-scanner-inline" onclick="scannerCodeBarre()">
+                            <i class="fa-solid fa-barcode"></i> Scanner
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Catégorie *</label>
+                        <select id="categorieProduit" required>
+                            <option value="">Sélectionner une catégorie</option>
+                            <option value="boissons">Boissons</option>
+                            <option value="snacks">Snacks</option>
+                            <option value="alimentaire">Alimentaire</option>
+                            <option value="hygiene">Hygiène</option>
+                            <option value="autre">Autre</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Prix unitaire (FCFA) *</label>
+                        <input type="number" id="prixProduit" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Stock initial *</label>
+                        <input type="number" id="stockInitial" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Seuil d'alerte *</label>
+                        <input type="number" id="seuilAlerte" min="0" required>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn-action secondaire" onclick="fermerModalProduit()">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn-action primaire">
+                            <i class="fa-solid fa-check"></i> Enregistrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Mouvement de Stock -->
+    <div class="modal-overlay" id="modalMouvementStock">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 id="titreMouvementStock">
+                    <i class="fa-solid fa-arrow-up"></i> Entrée de Stock
+                </h2>
+                <button class="btn-fermer-modal" onclick="fermerModalMouvementStock()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formMouvementStock">
+                    <input type="hidden" id="typeMouvementStock" value="entree">
+                    
+                    <div class="form-group">
+                        <label>Produit *</label>
+                        <select id="produitMouvement" required>
+                            <option value="">Sélectionner un produit</option>
+                            <!-- Options chargées dynamiquement -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quantité *</label>
+                        <input type="number" id="quantiteMouvement" min="1" required>
+                    </div>
+
+                    <div class="form-group" id="groupeMotifSortie" style="display: none;">
+                        <label>Motif de sortie *</label>
+                        <select id="motifSortie">
+                            <option value="vente">Vente</option>
+                            <option value="perte">Perte/Avarie</option>
+                            <option value="don">Don</option>
+                            <option value="autre">Autre</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Commentaire</label>
+                        <textarea id="commentaireMouvement" rows="3"></textarea>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn-action secondaire" onclick="fermerModalMouvementStock()">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn-action primaire">
+                            <i class="fa-solid fa-check"></i> Valider
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Déclaration Perte -->
+    <div class="modal-overlay" id="modalPerte">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>
+                    <i class="fa-solid fa-triangle-exclamation"></i> Déclarer une Perte
+                </h2>
+                <button class="btn-fermer-modal" onclick="fermerModalPerte()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formPerte">
+                    <div class="form-group">
+                        <label>Produit *</label>
+                        <select id="produitPerte" required>
+                            <option value="">Sélectionner un produit</option>
+                            <!-- Options chargées dynamiquement -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quantité perdue *</label>
+                        <input type="number" id="quantitePerte" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Raison de la perte *</label>
+                        <select id="raisonPerte" required>
+                            <option value="">Sélectionner une raison</option>
+                            <option value="peremption">Péremption</option>
+                            <option value="casse">Casse/Détérioration</option>
+                            <option value="vol">Vol</option>
+                            <option value="autre">Autre</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Justification *</label>
+                        <textarea id="justificationPerte" rows="4" required placeholder="Expliquer les circonstances de la perte..."></textarea>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn-action secondaire" onclick="fermerModalPerte()">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn-action primaire">
+                            <i class="fa-solid fa-check"></i> Enregistrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Remboursement Crédit -->
+    <div class="modal-overlay" id="modalRemboursement">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>
+                    <i class="fa-solid fa-money-bill"></i> Enregistrer un Remboursement
+                </h2>
+                <button class="btn-fermer-modal" onclick="fermerModalRemboursement()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formRemboursement">
+                    <div class="form-group">
+                        <label>Crédit *</label>
+                        <select id="creditRemboursement" required onchange="afficherInfoCredit()">
+                            <option value="">Sélectionner un crédit</option>
+                            <!-- Options chargées dynamiquement -->
+                        </select>
+                    </div>
+
+                    <div class="info-credit-remboursement" id="infoCreditRemboursement" style="display: none;">
+                        <p>Montant restant: <strong id="montantRestant">0 FCFA</strong></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Montant remboursé (FCFA) *</label>
+                        <input type="number" id="montantRembourse" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Type de remboursement</label>
+                        <div class="type-remboursement">
+                            <label class="radio-label">
+                                <input type="radio" name="typeRemboursement" value="partiel" checked>
+                                Partiel
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="typeRemboursement" value="total">
+                                Total
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Commentaire</label>
+                        <textarea id="commentaireRemboursement" rows="2"></textarea>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn-action secondaire" onclick="fermerModalRemboursement()">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn-action primaire">
+                            <i class="fa-solid fa-check"></i> Enregistrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Détail Vente -->
+    <div class="modal-overlay" id="modalDetailVente">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>
+                    <i class="fa-solid fa-receipt"></i> Détail de la Vente
+                </h2>
+                <button class="btn-fermer-modal" onclick="fermerModalDetailVente()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-vente-info">
+                    <div class="info-ligne">
+                        <span class="label">ID Vente:</span>
+                        <span class="valeur" id="detailVenteId">#V-001</span>
+                    </div>
+                    <div class="info-ligne">
+                        <span class="label">Date:</span>
+                        <span class="valeur" id="detailVenteDate">14/12/2025 14:35</span>
+                    </div>
+                    <div class="info-ligne">
+                        <span class="label">Client:</span>
+                        <span class="valeur" id="detailVenteClient">Jean Kouassi</span>
+                    </div>
+                    <div class="info-ligne">
+                        <span class="label">Type:</span>
+                        <span class="valeur" id="detailVenteType">Comptant</span>
+                    </div>
+                </div>
+                
+                <h3>Produits</h3>
+                <table class="tableau-detail-vente">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Prix unitaire</th>
+                            <th>Quantité</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detailVenteProduits">
+                        <!-- Rempli dynamiquement -->
+                    </tbody>
+                </table>
+
+                <div class="detail-vente-total">
+                    <strong>Total: <span id="detailVenteTotal">23 500 FCFA</span></strong>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn-action secondaire" onclick="fermerModalDetailVente()">
+                        Fermer
+                    </button>
+                    <button class="btn-action primaire" onclick="imprimerTicketVente()">
+                        <i class="fa-solid fa-print"></i> Imprimer Ticket
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ticket de Vente -->
+    <div class="modal-overlay" id="modalTicket">
+        <div class="modal-container">
+            <div class="modal-body">
+                <div class="ticket" id="ticket">
+                    <div class="ticket-header">
+                        <h2>BOUTIQUE UIYA</h2>
+                        <p>Université Internationale de Yamoussoukro</p>
+                        <p id="dateTicket"></p>
+                        <p>Ticket N° <span id="numeroTicket"></span></p>
+                    </div>
+                    <div id="itemsTicket"></div>
+                    <div class="ticket-footer">
+                        <div class="ticket-total">TOTAL: <span id="totalTicket"></span></div>
+                        <p id="infosPaiement"></p>
+                        <p style="margin-top: 1rem;">Merci de votre visite!</p>
+                    </div>
+                </div>
+                <div class="message-succes" id="messageSucces">
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span id="texteSucces"></span>
+                </div>
+                <div class="actions-ticket">
+                    <button class="btn-ticket btn-imprimer" onclick="imprimerTicket()">
+                        <i class="fa-solid fa-print"></i> Imprimer
+                    </button>
+                    <button class="btn-ticket btn-fermer" onclick="fermerTicket()">
+                        Fermer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../JS/main.js"></script>
+    <script src="../JS/utils.js"></script>
+</body>
+</html>

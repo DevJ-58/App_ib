@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>inscription_Bib</title>
+    <link rel="stylesheet" href="../CSS/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <div class="struct">
+        <i class="fa-solid fa-boxes-stacked"></i>
+        <h1>le IB en kinmin</h1>
+    </div>
+    <div class="container">
+        <form action="../../backend/inscription.php" method="POST">
+                <h1>Inscription </h1>
+            <div class="detail-user">
+                <div class="colonne">
+                    <div class="zone-saisie">
+                       <!-- <span class="details">Nom: </span> -->
+                       <input type="text" name="nom_user" placeholder="Entrer votre nom" required>
+                    </div>
+                    <div class="zone-saisie">
+                       <!-- <span class="details">Prénom: </span> -->
+                       <input type="text" name="prenom_user" placeholder="Entrer votre prénom" required>
+                    </div>
+                    <div class="zone-saisie">
+                       <!-- <span class="details">Numero</span> -->
+                       <input type="number" name="numero" placeholder="Entrer votre numero" required>
+                    </div>
+                </div>
+                <div class="colonne">
+                    <div class="zone-saisie">
+                       <!-- <span class="details">Email: </span> -->
+                       <input type="email" name="email_user" placeholder="Entrer votre email" required>
+                    </div>
+                    <div class="zone-saisie">
+                       <!-- <span class="details">Mot de passe: </span> -->
+                       <input type="password" name="password_user" placeholder="Entrer votre mot de passe" required>
+                    </div>
+                    <div class="zone-saisie">
+                       <!-- <span class="details">Confirmer mot de passe: </span> -->
+                       <input type="password" name="confirm_password" placeholder="Confirmer votre mot de passe" required>
+                    </div>
+                </div>
+            </div>
+            <input type="submit" name="sm_form" value="S'inscrire" onclick="Opendash()">
+            <div class="lastF">
+                <div class="redirect">
+                  <!-- <a href="resetpassword.html">mot de passe oublié ?</a> -->
+                  <span>Déjà un compte? <a href="connexion.html">se connecter</a></span>
+                </div>
+                <div class="icon_anim">
+                     <i class="fa-solid fa-boxes-stacked"></i>
+                </div>
+            </div>
+            
+        </form>
+    </div>
+    
+</body>
+</html>

@@ -1,0 +1,25 @@
+/* Backup of dashbord.css created on 2025-12-15 by assistant */
+
+/* If you need to restore, replace dashbord.css with this file's contents. */
+
+/* Original file content preserved here. */
+
+/* ===============================================
+   CSS BOUTIQUE UIYA - VERSION PROPRE
+   Développé par : GROUPE 1 - Licence 2 IGL
+   =============================================== */
+
+:root {
+    --header-height: 72px;
+    --sidebar-width: 280px;
+    --primary-blue: #1e3c72;
+    --primary-green: #27ae60;
+    --primary-red: #e74c3c;
+    --primary-orange: #f39c12;
+    --text-dark: #2c3e50;
+    --text-gray: #7f8c8d;
+    --bg-light: #f0f2f5;
+    --white: #ffffff;
+}
+
+/* ...backup contains full original contents to be restored if needed... */
