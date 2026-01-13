@@ -1644,20 +1644,23 @@ function enregistrerProduit() {
         afficherNotification('Erreur serveur', 'error');
     });
 }
-function validerProduit(nom, codeBarre, categorie, prix, stock, seuilAlerte) {
-  // Validation
-  if (!nom || !codeBarre || !categorie || !prix || isNaN(stock) || isNaN(seuilAlerte)) {
-    afficherNotification('Veuillez remplir tous les champs correctement', 'error');
-    return false; // retourne false pour indiquer une erreur
-  }
-
-  return true; // retourne true si tout est valide
-}
-
+function enregistrerProduit() {
+    // Récupérer les valeurs du formulaire
+    const nom = document.getElementById('nomProduit').value.trim();
+    const codeBarre = document.getElementById('codeBarreProduit').value.trim();
+    const categorie = document.getElementById('categorieProduit').value;
+    const prix = parseFloat(document.getElementById('prixProduit').value);
+    const stock = parseInt(document.getElementById('stockInitial').value);
+    const seuilAlerte = parseInt(document.getElementById('seuilAlerte')?.value) || 0;
 
 
-    
-    let mode = 'ajout';
+
+    // Validation
+    if (!nom || !codeBarre || !categorie || !prix || isNaN(stock) || isNaN(seuilAlerte)) {
+       afficherNotification('Veuillez remplir tous les champs correctement', 'error');
+        return;
+    }
+    let mode = 'ajout'; 
     if (mode === 'modifier' && produitId) {
         // Modification d'un produit existant
         const produit = produitsData.find(p => p.id === produitId);
@@ -1694,7 +1697,7 @@ function validerProduit(nom, codeBarre, categorie, prix, stock, seuilAlerte) {
     mettreAJourStatistiques();
     fermerModalProduit();
 
-
+}
 function enregistrerMouvementStock() {
     const type = document.getElementById('typeMouvementStock').value;
     const produitId = document.getElementById('produitMouvement').value;

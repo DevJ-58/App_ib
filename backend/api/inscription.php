@@ -54,5 +54,5 @@ $insert->execute([
 ]);
 
 /* ✅ Redirection finale */
-header("Location: /App_ib/frontend/HTML/connexion.html?success=1");
+header("Location: /APP_IB/frontend/HTML/connexion.html?success=1");
 exit;
