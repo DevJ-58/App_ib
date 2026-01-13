@@ -1057,7 +1057,7 @@ function ouvrirModalMouvementStock(type, produitId = null) {
     const titre = document.getElementById('titreMouvementStock');
     const groupeMotif = document.getElementById('groupeMotifSortie');
     const inputType = document.getElementById('typeMouvementStock');
-    
+
     if (!modal) return;
     
     document.getElementById('formMouvementStock').reset();
@@ -1548,15 +1548,25 @@ function initialiserEvenements() {
             }
         });
     });
+   
+    }
     
-    // Formulaire produit
-    const formProduit = document.getElementById('formProduit');
-    if (formProduit) {
-        formProduit.addEventListener('submit', function(e) {
+const formProduit = document.getElementById('formProduit');
+if (formProduit) {
+    formProduit.addEventListener('submit', function(e) {
             e.preventDefault();
             enregistrerProduit();
-        });
-    }
+            const mode = formProduit.dataset.mode || 'ajouter';
+        
+        // Seulement empêcher l'envoi en mode modification
+        if (mode === 'modifier') {
+            e.preventDefault();
+            enregistrerProduit();
+        }
+        // En mode ajout, ne rien faire - le formulaire s'enverra normalement au PHP
+    });
+}
+   
     
     // Formulaire mouvement stock
     const formMouvement = document.getElementById('formMouvementStock');
@@ -1609,26 +1619,45 @@ function initialiserEvenements() {
     }
     
     console.log('✅ Événements initialisés');
-}
 
 function enregistrerProduit() {
-    const form = document.getElementById('formProduit');
-    const mode = form.dataset.mode || 'ajouter';
-    const produitId = form.dataset.produitId;
+
+    const formData = new FormData();
+
+    formData.append('nom', document.getElementById('nomProduit').value.trim());
+    formData.append('code_barre', document.getElementById('codeBarreProduit').value.trim());
+    formData.append('categorie_id', document.getElementById('categorieProduit').value);
+    formData.append('prix_unitaire', document.getElementById('prixProduit').value);
+    formData.append('stock_actuel', document.getElementById('stockInitial').value);
+    formData.append('seuil_alerte', document.getElementById('seuilAlerte')?.value || 0);
+
+    fetch('/App_ib/backend/api/produit/create.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.text())
+    .then(msg => {
+        afficherNotification(msg, 'success');
+        fermerModalProduit();
+    })
+    .catch(() => {
+        afficherNotification('Erreur serveur', 'error');
+    });
+}
+function validerProduit(nom, codeBarre, categorie, prix, stock, seuilAlerte) {
+  // Validation
+  if (!nom || !codeBarre || !categorie || !prix || isNaN(stock) || isNaN(seuilAlerte)) {
+    afficherNotification('Veuillez remplir tous les champs correctement', 'error');
+    return false; // retourne false pour indiquer une erreur
+  }
+
+  return true; // retourne true si tout est valide
+}
+
+
+
     
-    const nom = document.getElementById('nomProduit').value.trim();
-    const codeBarre = document.getElementById('codeBarreProduit').value.trim();
-    const categorie = document.getElementById('categorieProduit').value;
-    const prix = parseFloat(document.getElementById('prixProduit').value);
-    const stock = parseInt(document.getElementById('stockInitial').value);
-    const seuilAlerte = parseInt(document.getElementById('seuilAlerte').value);
-    
-    // Validation
-    if (!nom || !codeBarre || !categorie || !prix || isNaN(stock) || isNaN(seuilAlerte)) {
-        afficherNotification('Veuillez remplir tous les champs correctement', 'error');
-        return;
-    }
-    
+    let mode = 'ajout';
     if (mode === 'modifier' && produitId) {
         // Modification d'un produit existant
         const produit = produitsData.find(p => p.id === produitId);
@@ -1664,7 +1693,7 @@ function enregistrerProduit() {
     afficherProduits(produitsData);
     mettreAJourStatistiques();
     fermerModalProduit();
-}
+
 
 function enregistrerMouvementStock() {
     const type = document.getElementById('typeMouvementStock').value;
