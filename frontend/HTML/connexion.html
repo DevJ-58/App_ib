@@ -20,15 +20,18 @@
 
     <!-- Conteneur principal -->
     <div class="container">
-        <form method="POST" action="">
+        <form id="formConnexion" method="POST">
             <h1>Connexion</h1>
+            
+            <div id="messageErreur" style="display:none; color: #e74c3c; text-align: center; margin-bottom: 15px; padding: 10px; background-color: #fadbd8; border-radius: 5px;"></div>
             
             <div class="detail-user">
                 <!-- Colonne 1 -->
                 <div class="colonne">
                     <div class="zone-saisie">
                         <input 
-                            type="number" 
+                            type="text" 
+                            id="telephone" 
                             name="number_user" 
                             placeholder="Numéro de téléphone" 
                             required
@@ -43,6 +46,7 @@
                     <div class="zone-saisie">
                         <input 
                             type="password" 
+                            id="motDePasse" 
                             name="password_user" 
                             placeholder="Mot de passe" 
                             required
@@ -56,8 +60,7 @@
                 id="btnS" 
                 type="submit" 
                 name="sm_form" 
-                value="Se connecter" 
-                onclick="Opendash()">
+                value="Se connecter">
 
             <div class="lastF">
                 <div class="redirect">
@@ -73,6 +76,7 @@
         </form>
     </div>
 
+    <script src="../JS/utils.js"></script>
     <script src="../JS/main.js"></script>
 </body>
 </html>

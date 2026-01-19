@@ -6,6 +6,7 @@
     <title>Gestion Boutique UIYA - Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../CSS/dashbord.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <!-- En-tête de navigation -->
@@ -24,7 +25,7 @@
                 <span class="nombre-notifications">5</span>
             </div>
             <!-- Photo de profil -->
-            <div class="profil">
+            <div class="profil" onclick="ouvrirModalProfil()" style="cursor: pointer;">
                 <img src="https://via.placeholder.com/40" alt="Photo de profil">
                 <span class="nom-utilisateur">Mr IB</span>
             </div>
@@ -53,17 +54,17 @@
                             <span>Produits</span>
                         </a>
                     </li>
-                    <li>
-                        <a href="#" onclick="afficherSection('ventes')">
-                            <i class="fa-solid fa-cart-shopping"></i>
-                            <span>Ventes</span>
-                        </a>
-                    </li>
-                    <li>
+                     <li>
                         <a href="#" onclick="afficherSection('stocks')">
                             <i class="fa-solid fa-cubes"></i>
                             <span>Stocks</span>
                             <span class="badge-menu">3</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="afficherSection('ventes')">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            <span>Ventes</span>
                         </a>
                     </li>
                     <li>
@@ -74,9 +75,10 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" onclick="afficherSection('inventaires')">
-                            <i class="fa-solid fa-clipboard-list"></i>
-                            <span>Inventaires</span>
+                        <a href="#" onclick="afficherSection('alertes')">
+                            <i class="fa-solid fa-bell"></i>
+                            <span>Alertes</span>
+                            <span class="badge-menu">5</span>
                         </a>
                     </li>
                     <li>
@@ -86,10 +88,9 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" onclick="afficherSection('alertes')">
-                            <i class="fa-solid fa-bell"></i>
-                            <span>Alertes</span>
-                            <span class="badge-menu">5</span>
+                        <a href="#" onclick="afficherSection('inventaires')">
+                            <i class="fa-solid fa-clipboard-list"></i>
+                            <span>Inventaires</span>
                         </a>
                     </li>
                 </ul>
@@ -121,10 +122,10 @@
 
                 <!-- Barre d'actions rapides -->
                 <div class="barre-actions">
-                    <div class="zone-recherche">
+                    <!-- <div class="zone-recherche">
                         <i class="fa-solid fa-magnifying-glass"></i>
                         <input type="text" placeholder="Rechercher un produit par nom ou code-barre...">
-                    </div>
+                    </div> -->
                     <div class="actions-rapides">
                         <button class="btn-action primaire" onclick="afficherSection('ventes')">
                             <i class="fa-solid fa-plus"></i> Nouvelle Vente
@@ -352,7 +353,7 @@
                         </div>
                         <div class="zone-graphique">
                             <canvas id="chartVentes7Jours" aria-label="Graphique des ventes sur 7 jours"></canvas>
-                            <noscript>JavaScript est nécessaire pour afficher le graphique.</noscript>
+                            <!-- <noscript>JavaScript est nécessaire pour afficher le graphique.</noscript> -->
                         </div>
                     </div>
 
@@ -473,13 +474,14 @@
                         <h3><i class="fa-solid fa-filter"></i> Filtres</h3>
                         <div class="groupe-filtre">
                             <label>Catégorie</label>
+                            <button class="btn-action btn-primaire" onclick="ouvrirModalCategorie()">ajouter une categorie</button>
+                            <br>
                             <select id="filtreCategorie" onchange="filtrerProduits()">
                                 <option value="">Toutes les catégories</option>
                                 <option value="boissons">Boissons</option>
                                 <option value="snacks">Snacks</option>
                                 <option value="alimentaire">Alimentaire</option>
                                 <option value="hygiene">Hygiène</option>
-                                <option value="autre">Autre</option>
                             </select>
                         </div>
 
@@ -1235,7 +1237,7 @@
 
                 <!-- Rapports rapides -->
                 <section class="section-contenu">
-                    <div class="carte-contenu">
+                    <div class="carte-contenu" style="background-color:transparent;">
                         <div class="entete-carte">
                             <h2><i class="fa-solid fa-file-lines"></i> Rapports Prédéfinis</h2>
                         </div>
@@ -1600,6 +1602,65 @@
         </div>
     </div>
 
+    <!-- Modal Ajouter Categorie -->
+
+    <div class="modal-overlay" id="modalCategorie">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 id="titreCategorie">
+                    <i class="fa-solid fa-box-open"></i> Ajouter une Categorie
+                </h2>
+                <button class="btn-fermer-modal" onclick="fermerModalCategorie()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Onglets pour navigation -->
+                <div class="categorie-tabs">
+                    <button class="tab-btn tab-active" onclick="basculerTabCategorie('ajouter')">
+                        <i class="fa-solid fa-plus"></i> Ajouter
+                    </button>
+                    <button class="tab-btn" onclick="basculerTabCategorie('gerer')">
+                        <i class="fa-solid fa-list"></i> Gérer
+                    </button>
+                </div>
+
+                <!-- Onglet Ajouter -->
+                <div id="tabAjouter" class="categorie-tab-content active">
+                    <form id="formCategorie">
+                        <div class="form-group">
+                            <label>Nom de la categorie</label>
+                            <input type="text" id="nomCategorie" required>
+                        </div>
+
+                        <div class="modal-actions">
+                            <button type="button" class="btn-action secondaire" onclick="fermerModalCategorie()">
+                                Annuler
+                            </button>
+                            <button type="submit" class="btn-action primaire">
+                                <i class="fa-solid fa-check"></i> Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Onglet Gérer -->
+                <div id="tabGerer" class="categorie-tab-content">
+                    <h3 style="margin-bottom: 15px; color: #09093A;">
+                        <i class="fa-solid fa-list"></i> Liste des catégories
+                    </h3>
+                    <div id="listeCategories" class="liste-categories"></div>
+                    
+                    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #dee2e6;">
+                        <button type="button" class="btn-action secondaire" onclick="fermerModalCategorie()" style="width: 100%;">
+                            Fermer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Mouvement de Stock -->
     <div class="modal-overlay" id="modalMouvementStock">
         <div class="modal-container">
@@ -1865,6 +1926,84 @@
                         Fermer
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Profil -->
+    <div id="modalProfil" class="modal" style="display:none;">
+        <div class="modal-contenu">
+            <div class="modal-entete">
+                <h2>Mon Profil</h2>
+                <button class="modal-fermer" onclick="fermerModalProfil()">&times;</button>
+            </div>
+            
+            <div class="modal-corps">
+                <div id="messageProfilErreur" style="display:none; color: #e74c3c; text-align: center; margin-bottom: 15px; padding: 10px; background-color: #fadbd8; border-radius: 5px;"></div>
+                <div id="messageProfilSucces" style="display:none; color: #27ae60; text-align: center; margin-bottom: 15px; padding: 10px; background-color: #d5f4e6; border-radius: 5px;"></div>
+
+                <div class="profil-photo-section">
+                    <div class="profil-photo-container">
+                        <img id="profilPhotoPreview" src="https://via.placeholder.com/120" alt="Photo de profil">
+                    </div>
+                    <div class="profil-photo-actions">
+                        <label class="btn-uploader-photo">
+                            <i class="fa-solid fa-camera"></i> Changer la photo
+                            <input type="file" id="profilPhotoInput" accept="image/*" style="display:none;">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="profil-info-section">
+                    <h3>Informations personnelles</h3>
+                    <div class="profil-info-groupe">
+                        <div class="profil-info-champ">
+                            <label>Prénom</label>
+                            <input type="text" id="profilPrenom" placeholder="Prénom" readonly>
+                        </div>
+                        <div class="profil-info-champ">
+                            <label>Nom</label>
+                            <input type="text" id="profilNom" placeholder="Nom" readonly>
+                        </div>
+                    </div>
+
+                    <div class="profil-info-groupe">
+                        <div class="profil-info-champ">
+                            <label>Téléphone</label>
+                            <input type="text" id="profilTelephone" placeholder="Téléphone" readonly>
+                        </div>
+                        <div class="profil-info-champ">
+                            <label>Email</label>
+                            <input type="email" id="profilEmail" placeholder="Email" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profil-info-section">
+                    <h3>Modifier le mot de passe</h3>
+                    <div class="profil-info-groupe">
+                        <div class="profil-info-champ">
+                            <label>Mot de passe actuel</label>
+                            <input type="password" id="profilMotDePasseActuel" placeholder="Mot de passe actuel">
+                        </div>
+                    </div>
+
+                    <div class="profil-info-groupe">
+                        <div class="profil-info-champ">
+                            <label>Nouveau mot de passe</label>
+                            <input type="password" id="profilNouveauMotDePasse" placeholder="Nouveau mot de passe" minlength="6">
+                        </div>
+                        <div class="profil-info-champ">
+                            <label>Confirmer le mot de passe</label>
+                            <input type="password" id="profilConfirmMotDePasse" placeholder="Confirmer le mot de passe" minlength="6">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-pied">
+                <button class="btn-modal btn-annuler" onclick="fermerModalProfil()">Annuler</button>
+                <button class="btn-modal btn-sauvegarder" onclick="sauvegarderProfil()">Sauvegarder</button>
             </div>
         </div>
     </div>
