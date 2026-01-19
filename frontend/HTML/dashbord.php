@@ -1,3 +1,18 @@
+<?php
+session_start();
+
+// Si l'utilisateur n'est pas connecté → redirige vers login
+if (!isset($_SESSION['user'])) {
+    header("Location: connexion.html");
+    exit;
+}
+
+$user = $_SESSION['user'];
+?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -25,7 +40,7 @@
                 <span class="nombre-notifications">5</span>
             </div>
             <!-- Photo de profil -->
-            <div class="profil" onclick="ouvrirModalProfil()" style="cursor: pointer;">
+            <div class="profil">
                 <img src="https://via.placeholder.com/40" alt="Photo de profil">
                 <span class="nom-utilisateur">Mr IB</span>
             </div>
@@ -1548,15 +1563,15 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="formProduit">
-                    <div class="form-group">
+            <form id="formProduit" action="/App_ib/backend/api/produit/create.php" method="POST" data-mode="ajouter">
+                    <div class="form-group" >
                         <label>Nom du produit *</label>
-                        <input type="text" id="nomProduit" required>
+                        <input type="text" id="nomProduit" name="nom" required >
                     </div>
 
                     <div class="form-group">
                         <label>Code-barre *</label>
-                        <input type="text" id="codeBarreProduit" required>
+                        <input type="text" id="codeBarreProduit" name="code_barre" required>
                         <button type="button" class="btn-scanner-inline" onclick="scannerCodeBarre()">
                             <i class="fa-solid fa-barcode"></i> Scanner
                         </button>
@@ -1564,29 +1579,29 @@
 
                     <div class="form-group">
                         <label>Catégorie *</label>
-                        <select id="categorieProduit" required>
+                        <select  name="categorie_id" required >
                             <option value="">Sélectionner une catégorie</option>
-                            <option value="boissons">Boissons</option>
-                            <option value="snacks">Snacks</option>
-                            <option value="alimentaire">Alimentaire</option>
-                            <option value="hygiene">Hygiène</option>
-                            <option value="autre">Autre</option>
+                            <option value="1">Boissons</option>
+                            <option value="2">Snacks</option>
+                            <option value="3">Alimentaire</option>
+                            <option value="4">Hygiène</option>
+                            <option value="5">Autre</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label>Prix unitaire (FCFA) *</label>
-                        <input type="number" id="prixProduit" min="0" required>
+                        <input type="number" id="prixProduit" min="0" required name="prix_unitaire">
                     </div>
 
                     <div class="form-group">
                         <label>Stock initial *</label>
-                        <input type="number" id="stockInitial" min="0" required>
+                        <input type="number" id="stockInitial" min="0" required name="stock_actuel">
                     </div>
 
                     <div class="form-group">
                         <label>Seuil d'alerte *</label>
-                        <input type="number" id="seuilAlerte" min="0" required>
+                        <input type="number" id="seuilAlerte" min="0" required name="seuil_alerte">
                     </div>
 
                     <div class="modal-actions">

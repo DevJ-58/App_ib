@@ -1865,7 +1865,7 @@ function ouvrirModalMouvementStock(type, produitId = null) {
     const titre = document.getElementById('titreMouvementStock');
     const groupeMotif = document.getElementById('groupeMotifSortie');
     const inputType = document.getElementById('typeMouvementStock');
-    
+
     if (!modal) return;
     
     document.getElementById('formMouvementStock').reset();
@@ -2525,15 +2525,26 @@ function initialiserEvenements() {
             }
         });
     });
+   
+    }
     
-    // Formulaire produit
-    const formProduit = document.getElementById('formProduit');
-    if (formProduit) {
-        formProduit.addEventListener('submit', function(e) {
+const formProduit = document.getElementById('formProduit');
+
+if (formProduit) {
+    formProduit.addEventListener('submit', function (e) {
+        const mode = formProduit.dataset.mode || 'ajouter';
+
+        if (mode === 'modifier') {
+            // En mode modification → AJAX
             e.preventDefault();
             enregistrerProduit();
-        });
-    }
+        }
+        // En mode ajout → AUCUN preventDefault
+        // Le formulaire s'envoie normalement vers create.php
+    });
+}
+
+   
     
     // Formulaire mouvement stock
     const formMouvement = document.getElementById('formMouvementStock');
@@ -2731,61 +2742,89 @@ function initialiserEvenements() {
     }
     
     console.log('✅ Événements initialisés');
-}
 
 function enregistrerProduit() {
-    const form = document.getElementById('formProduit');
-    const mode = form.dataset.mode || 'ajouter';
-    const produitId = form.dataset.produitId;
-    
+
+    const formData = new FormData();
+
+    formData.append('nom', document.getElementById('nomProduit').value.trim());
+    formData.append('code_barre', document.getElementById('codeBarreProduit').value.trim());
+    formData.append('categorie_id', document.getElementById('categorieProduit').value);
+    formData.append('prix_unitaire', document.getElementById('prixProduit').value);
+    formData.append('stock_actuel', document.getElementById('stockInitial').value);
+    formData.append('seuil_alerte', document.getElementById('seuilAlerte')?.value || 0);
+
+    fetch('/App_ib/backend/api/produit/create.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.text())
+    .then(msg => {
+        afficherNotification(msg, 'success');
+        fermerModalProduit();
+    })
+    .catch(() => {
+        afficherNotification('Erreur serveur', 'error');
+    });
+}
+async function enregistrerProduit() {
+    // Récupérer les valeurs
     const nom = document.getElementById('nomProduit').value.trim();
     const codeBarre = document.getElementById('codeBarreProduit').value.trim();
     const categorie = document.getElementById('categorieProduit').value;
     const prix = parseFloat(document.getElementById('prixProduit').value);
     const stock = parseInt(document.getElementById('stockInitial').value);
-    const seuilAlerte = parseInt(document.getElementById('seuilAlerte').value);
-    
-    // Validation
+    const seuilAlerte = parseInt(document.getElementById('seuilAlerte')?.value) || 0;
+
+    // Validation front
     if (!nom || !codeBarre || !categorie || !prix || isNaN(stock) || isNaN(seuilAlerte)) {
         afficherNotification('Veuillez remplir tous les champs correctement', 'error');
         return;
     }
-    
-    if (mode === 'modifier' && produitId) {
-        // Modification d'un produit existant
-        const produit = produitsData.find(p => p.id === produitId);
-        if (produit) {
-            produit.nom = nom;
-            produit.codeBarre = codeBarre;
-            produit.categorie = categorie;
-            produit.prix = prix;
-            produit.stock = stock;
-            produit.seuilAlerte = seuilAlerte;
-            
-            afficherNotification('Produit modifié avec succès', 'success');
+
+    // Préparer les données à envoyer
+    const formData = new FormData();
+    formData.append('nom', nom);
+    formData.append('code_barre', codeBarre);
+    formData.append('categorie_id', categorie); // ici, value doit être un ID numérique
+    formData.append('prix_unitaire', prix);
+    formData.append('stock_actuel', stock);
+    formData.append('seuil_alerte', seuilAlerte);
+
+    try {
+        const response = await fetch('/App_ib/backend/api/produit/create.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const text = await response.text();
+
+        if (response.status === 201) {
+            // Ajout réussi → mettre à jour le tableau front
+            const nouveauProduit = {
+                id: 'PROD' + Date.now(),
+                nom: nom,
+                codeBarre: codeBarre,
+                categorie: categorie,
+                prix: prix,
+                stock: stock,
+                seuilAlerte: seuilAlerte,
+                icone: 'fa-box'
+            };
+            produitsData.push(nouveauProduit);
+            afficherProduits(produitsData);
+            mettreAJourStatistiques();
+            fermerModalProduit();
+            afficherNotification(text, 'success');
+        } else {
+            // Affiche le message d'erreur envoyé par PHP
+            afficherNotification(text, 'error');
         }
-    } else {
-        // Ajout d'un nouveau produit
-        const nouveauProduit = {
-            id: 'PROD' + Date.now(),
-            nom: nom,
-            codeBarre: codeBarre,
-            categorie: categorie,
-            prix: prix,
-            stock: stock,
-            seuilAlerte: seuilAlerte,
-            icone: 'fa-box'
-        };
-        
-        produitsData.push(nouveauProduit);
-        stockData.push(JSON.parse(JSON.stringify(nouveauProduit)));
-        
-        afficherNotification('Produit ajouté avec succès', 'success');
+
+    } catch (err) {
+        console.error(err);
+        afficherNotification('Erreur serveur, impossible d’ajouter le produit', 'error');
     }
-    
-    afficherProduits(produitsData);
-    mettreAJourStatistiques();
-    fermerModalProduit();
 }
 
 function enregistrerMouvementStock() {
