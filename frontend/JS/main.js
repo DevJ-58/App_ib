@@ -1552,20 +1552,21 @@ function initialiserEvenements() {
     }
     
 const formProduit = document.getElementById('formProduit');
+
 if (formProduit) {
-    formProduit.addEventListener('submit', function(e) {
-            e.preventDefault();
-            enregistrerProduit();
-            const mode = formProduit.dataset.mode || 'ajouter';
-        
-        // Seulement empêcher l'envoi en mode modification
+    formProduit.addEventListener('submit', function (e) {
+        const mode = formProduit.dataset.mode || 'ajouter';
+
         if (mode === 'modifier') {
+            // En mode modification → AJAX
             e.preventDefault();
             enregistrerProduit();
         }
-        // En mode ajout, ne rien faire - le formulaire s'enverra normalement au PHP
+        // En mode ajout → AUCUN preventDefault
+        // Le formulaire s'envoie normalement vers create.php
     });
 }
+
    
     
     // Formulaire mouvement stock
@@ -1644,8 +1645,8 @@ function enregistrerProduit() {
         afficherNotification('Erreur serveur', 'error');
     });
 }
-function enregistrerProduit() {
-    // Récupérer les valeurs du formulaire
+async function enregistrerProduit() {
+    // Récupérer les valeurs
     const nom = document.getElementById('nomProduit').value.trim();
     const codeBarre = document.getElementById('codeBarreProduit').value.trim();
     const categorie = document.getElementById('categorieProduit').value;
@@ -1653,51 +1654,57 @@ function enregistrerProduit() {
     const stock = parseInt(document.getElementById('stockInitial').value);
     const seuilAlerte = parseInt(document.getElementById('seuilAlerte')?.value) || 0;
 
-
-
-    // Validation
+    // Validation front
     if (!nom || !codeBarre || !categorie || !prix || isNaN(stock) || isNaN(seuilAlerte)) {
-       afficherNotification('Veuillez remplir tous les champs correctement', 'error');
+        afficherNotification('Veuillez remplir tous les champs correctement', 'error');
         return;
     }
-    let mode = 'ajout'; 
-    if (mode === 'modifier' && produitId) {
-        // Modification d'un produit existant
-        const produit = produitsData.find(p => p.id === produitId);
-        if (produit) {
-            produit.nom = nom;
-            produit.codeBarre = codeBarre;
-            produit.categorie = categorie;
-            produit.prix = prix;
-            produit.stock = stock;
-            produit.seuilAlerte = seuilAlerte;
-            
-            afficherNotification('Produit modifié avec succès', 'success');
-        }
-    } else {
-        // Ajout d'un nouveau produit
-        const nouveauProduit = {
-            id: 'PROD' + Date.now(),
-            nom: nom,
-            codeBarre: codeBarre,
-            categorie: categorie,
-            prix: prix,
-            stock: stock,
-            seuilAlerte: seuilAlerte,
-            icone: 'fa-box'
-        };
-        
-        produitsData.push(nouveauProduit);
-        stockData.push(JSON.parse(JSON.stringify(nouveauProduit)));
-        
-        afficherNotification('Produit ajouté avec succès', 'success');
-    }
-    
-    afficherProduits(produitsData);
-    mettreAJourStatistiques();
-    fermerModalProduit();
 
+    // Préparer les données à envoyer
+    const formData = new FormData();
+    formData.append('nom', nom);
+    formData.append('code_barre', codeBarre);
+    formData.append('categorie_id', categorie); // ici, value doit être un ID numérique
+    formData.append('prix_unitaire', prix);
+    formData.append('stock_actuel', stock);
+    formData.append('seuil_alerte', seuilAlerte);
+
+    try {
+        const response = await fetch('/App_ib/backend/api/produit/create.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const text = await response.text();
+
+        if (response.status === 201) {
+            // Ajout réussi → mettre à jour le tableau front
+            const nouveauProduit = {
+                id: 'PROD' + Date.now(),
+                nom: nom,
+                codeBarre: codeBarre,
+                categorie: categorie,
+                prix: prix,
+                stock: stock,
+                seuilAlerte: seuilAlerte,
+                icone: 'fa-box'
+            };
+            produitsData.push(nouveauProduit);
+            afficherProduits(produitsData);
+            mettreAJourStatistiques();
+            fermerModalProduit();
+            afficherNotification(text, 'success');
+        } else {
+            // Affiche le message d'erreur envoyé par PHP
+            afficherNotification(text, 'error');
+        }
+
+    } catch (err) {
+        console.error(err);
+        afficherNotification('Erreur serveur, impossible d’ajouter le produit', 'error');
+    }
 }
+
 function enregistrerMouvementStock() {
     const type = document.getElementById('typeMouvementStock').value;
     const produitId = document.getElementById('produitMouvement').value;

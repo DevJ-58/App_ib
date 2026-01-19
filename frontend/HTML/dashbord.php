@@ -1562,7 +1562,7 @@ $user = $_SESSION['user'];
                 </button>
             </div>
             <div class="modal-body">
-            <form id="formProduit" action="/App_ib/backend/api/produit/create.php" method="POST">
+            <form id="formProduit" action="/App_ib/backend/api/produit/create.php" method="POST" data-mode="ajouter">
                     <div class="form-group" >
                         <label>Nom du produit *</label>
                         <input type="text" id="nomProduit" name="nom" required >
@@ -1578,13 +1578,13 @@ $user = $_SESSION['user'];
 
                     <div class="form-group">
                         <label>Catégorie *</label>
-                        <select id="categorieProduit" required>
+                        <select  name="categorie_id" required >
                             <option value="">Sélectionner une catégorie</option>
-                            <option value="boissons">Boissons</option>
-                            <option value="snacks">Snacks</option>
-                            <option value="alimentaire">Alimentaire</option>
-                            <option value="hygiene">Hygiène</option>
-                            <option value="autre">Autre</option>
+                            <option value="1">Boissons</option>
+                            <option value="2">Snacks</option>
+                            <option value="3">Alimentaire</option>
+                            <option value="4">Hygiène</option>
+                            <option value="5">Autre</option>
                         </select>
                     </div>
 
